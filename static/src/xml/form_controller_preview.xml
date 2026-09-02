@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.FormView.PreviewButton" t-inherit="web.FormView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-create-button']/button" position="after">
+            <button t-if="showPreviewButton" type="button" class="btn btn-secondary"
+                    style="margin-left:8px;" t-on-click="onClickPreview">
+                Preview
+            </button>
+            <DocumentPreviewPanel t-if="showPreviewPanel"
+                                   resModel="props.resModel"
+                                   resId="model.root.resId"
+                                   fileName="model.root.data.file_name"/>
+        </xpath>
+    </t>
+</templates>

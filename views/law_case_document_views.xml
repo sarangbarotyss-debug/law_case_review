@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_case_document_form" model="ir.ui.view">
+        <field name="name">law.case.document.form</field>
+        <field name="model">law.case.document</field>
+        <field name="arch" type="xml">
+            <form string="Case Document">
+                <sheet>
+                    <field name="text_extraction_queued" widget="async_field_watcher"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="case_id" force_save="1"/>
+                        <field name="document_type"/>
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <div class="d-flex gap-2 mb-3">
+                        <button name="action_extract_text_async" string="Extract Text" type="object" class="btn-secondary" invisible="text_extraction_queued"/>
+                        <button string="Extracting..." class="btn-secondary" disabled="disabled" invisible="not text_extraction_queued"/>
+                        <button name="action_extract_timeline_async" string="Extract Timeline" type="object" class="btn-secondary" invisible="timeline_extracted or timeline_extraction_queued"/>
+                    </div>
+                    <notebook>
+                        <page string="Extracted Text">
+                            <field name="ocr_text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

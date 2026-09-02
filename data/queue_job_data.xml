@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="channel_playbook_ingestion" model="queue.job.channel">
+        <field name="name">playbook_ingestion</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+
+    <record id="job_function_law_playbook_source_process" model="queue.job.function">
+        <field name="model_id" ref="model_law_playbook_source"/>
+        <field name="method">button_process_job</field>
+        <field name="channel_id" ref="channel_playbook_ingestion"/>
+        <field name="allow_commit" eval="True"/>
+    </record>
+
+    <record id="job_function_law_playbook_source_process_chunk" model="queue.job.function">
+        <field name="model_id" ref="model_law_playbook_source"/>
+        <field name="method">button_process_chunk_job</field>
+        <field name="channel_id" ref="channel_playbook_ingestion"/>
+        <field name="allow_commit" eval="True"/>
+    </record>
+
+    <record id="job_function_law_client_request_extraction" model="queue.job.function">
+        <field name="model_id" ref="model_law_client_request"/>
+        <field name="method">button_process_extraction_job</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+    </record>
+
+    <record id="job_function_law_case_playbook_comparison" model="queue.job.function">
+        <field name="model_id" ref="model_law_case"/>
+        <field name="method">action_process_playbook_comparison</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="allow_commit">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_law_case_root" name="Law Case Review"/>
+    <menuitem id="menu_law_case"
+              name="Cases"
+              parent="menu_law_case_root"
+              action="action_law_case"/>
+    <menuitem id="menu_law_client_request"
+          name="Client Requests"
+          parent="menu_law_case_root"
+          action="action_law_client_request"/>
+
+    <menuitem id="menu_law_case_config"
+              name="Configuration"
+              parent="menu_law_case_root"
+              sequence="100"/>
+
+    <menuitem id="menu_law_ai_model_option"
+          name="AI Models"
+          parent="menu_law_case_config"
+          action="action_law_ai_model_option"/>
+    <menuitem id="menu_law_embedding_model_option"
+          name="Embedding Models"
+          parent="menu_law_case_config"
+          action="action_law_embedding_model_option"/>
+    <menuitem id="menu_law_playbook_source"
+          name="Playbook Sources"
+          parent="menu_law_case_config"
+          action="action_law_playbook_source"/>
+    <menuitem id="menu_law_practice_area"
+          name="Practice Areas"
+          parent="menu_law_case_config"
+          action="action_law_practice_area"/>
+
+    <record id="action_law_case_settings" model="ir.actions.act_window">
+      <field name="name">Settings</field>
+      <field name="res_model">res.config.settings</field>
+      <field name="view_mode">form</field>
+      <field name="target">current</field>
+      <field name="context">{'module': 'law_case_review'}</field>
+  </record>
+    <menuitem id="menu_law_case_settings"
+          name="Settings"
+          parent="menu_law_case_config"
+          action="action_law_case_settings"
+          sequence="100"/>
+</odoo>

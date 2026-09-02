@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_law_case_form" model="ir.ui.view">
+            <field name="name">law.case.form</field>
+            <field name="model">law.case</field>
+            <field name="arch" type="xml">
+                <form string="Law Case">
+                    <header>
+                        <field name="playbook_match_running" invisible="1"/>
+                        <div class="oe_button_box">
+                            <button name="action_find_playbook_matches" type="object" string="Find"
+                                    class="btn-primary" invisible="playbook_match_running"/>
+                            <button string="Finding..." class="btn-primary" disabled="disabled"
+                                    invisible="not playbook_match_running"/>
+                        </div>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_open_dms_directory" type="object"
+                                    class="oe_stat_button" icon="fa-folder-open"
+                                    invisible="not dms_directory_id">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Documents</span>
+                                </div>
+                            </button>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="client_id"/>
+                            <field name="lawyer_id" readonly="not is_case_manager"/>
+                            <field name="is_case_manager" invisible="1"/>
+                            <field name="practice_area_id"/>
+                            <field name="outcome"/>
+                            <field name="closure_date" invisible="outcome == 'open'"/>
+                            <field name="description"/>
+                            <field name="playbook_source_ids" widget="many2many_tags"/>
+                        </group>
+                        <notebook>
+                            <page string="Documents">
+                                <field name="document_ids">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="document_type"/>
+                                        <field name="state"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Parties">
+                                <field name="party_ids">
+                                    <list editable="bottom">
+                                        <field name="name"/>
+                                        <field name="role"/>
+                                        <field name="contact_phone"/>
+                                        <field name="contact_email"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Hearings">
+                                <field name="hearing_ids">
+                                    <list editable="bottom">
+                                        <field name="hearing_date"/>
+                                        <field name="court"/>
+                                        <field name="judge"/>
+                                        <field name="notes"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Playbook Matches">
+                                <field name="match_ids">
+                                    <list>
+                                        <field name="clause_number"/>
+                                        <field name="clause_title"/>
+                                        <field name="match_type" widget="badge" decoration-danger="match_type == 'violation'" decoration-success="match_type == 'defense'"/>
+                                        <field name="confidence" widget="badge" decoration-success="confidence == 'strong'" decoration-muted="confidence == 'possible'"/>
+                                        <field name="score"/>
+                                        <field name="explanation"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Q&amp;A History">
+                                <field name="qa_log_ids" readonly="1">
+                                    <list>
+                                        <field name="create_date" string="Asked On"/>
+                                        <field name="user_id"/>
+                                        <field name="question"/>
+                                        <field name="answer"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Timeline" name="timeline">
+                               <field name="timeline_extraction_running" widget="async_field_watcher"/>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <button name="action_extract_timeline_all" string="Extract Timeline (All Documents)" type="object" class="btn-secondary" invisible="0"/>
+                                    <span class="text-muted" invisible="not draft_timeline_event_label">
+                                        <field name="draft_timeline_event_label" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <field name="visible_timeline_event_ids">
+                                    <list editable="bottom" decoration-muted="state == 'draft'" delete="false">
+                                        <field name="event_date"/>
+                                        <field name="event_date_text" optional="hide"/>
+                                        <field name="title"/>
+                                        <field name="event_type"/>
+                                        <field name="description" optional="hide"/>
+                                        <field name="source_snippet" optional="hide"/>
+                                        <field name="document_id"/>
+                                        <field name="state" widget="badge" decoration-warning="state == 'draft'" decoration-success="state == 'confirmed'" decoration-danger="state == 'rejected'"/>
+                                        <button name="action_preview_document" string="Preview" type="object" icon="fa-eye" invisible="not document_id"/>
+                                        <button name="action_confirm" string="Confirm" type="object" icon="fa-check" invisible="state != 'draft'"/>
+                                        <button name="action_reject" string="Reject" type="object" icon="fa-times" invisible="state != 'draft'"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Case Brief" name="case_brief">
+                                <field name="case_brief_generating" widget="async_field_watcher"/>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <button name="action_generate_case_brief" string="Generate Case Brief" type="object" class="btn-secondary" invisible="case_brief_generating"/>
+                                    <span class="text-muted" invisible="not case_brief_generated_at">
+                                        <field name="case_brief_generated_at" nolabel="1" readonly="1"/>
+                                    </span>
+                                </div>
+                                <div class="alert alert-warning" role="alert" invisible="case_brief_stale_count == 0">
+                                    <field name="case_brief_stale_count" nolabel="1"/> document(s) changed since this brief was generated — consider regenerating.
+                                </div>
+                                <field name="case_brief_html" nolabel="1" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_law_case_list" model="ir.ui.view">
+            <field name="name">law.case.list</field>
+            <field name="model">law.case</field>
+            <field name="arch" type="xml">
+                <list string="Law Cases">
+                    <field name="name"/>
+                    <field name="client_id"/>
+                    <field name="lawyer_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_law_case" model="ir.actions.act_window">
+            <field name="name">Law Cases</field>
+            <field name="res_model">law.case</field>
+            <field name="view_mode">list,form</field>
+        </record>        
+    </data>
+</odoo>

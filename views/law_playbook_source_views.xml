@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_law_playbook_source_form" model="ir.ui.view">
+        <field name="name">law.playbook.source.form</field>
+        <field name="model">law.playbook.source</field>
+        <field name="arch" type="xml">
+            <form string="Playbook Source">
+                <header>
+                    <button name="action_process" type="object" string="Process Document"
+                            invisible="state in ('processing', 'done')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_clauses" icon="fa-list">
+                            <field name="clause_count" widget="statinfo" string="Clauses"/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                        <field name="source_type"/>
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_law_playbook_source_list" model="ir.ui.view">
+        <field name="name">law.playbook.source.list</field>
+        <field name="model">law.playbook.source</field>
+        <field name="arch" type="xml">
+            <list string="Playbook Sources">
+                <field name="name"/>
+                <field name="source_type"/>
+                <field name="clause_count"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_law_playbook_source" model="ir.actions.act_window">
+        <field name="name">Playbook Sources</field>
+        <field name="res_model">law.playbook.source</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_law_playbook_clause_list" model="ir.ui.view">
+        <field name="name">law.playbook.clause.list</field>
+        <field name="model">law.playbook.clause</field>
+        <field name="arch" type="xml">
+            <list string="Playbook Clauses">
+                <field name="clause_number"/>
+                <field name="title"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

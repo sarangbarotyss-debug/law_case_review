@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.ListView.Buttons"
+       t-inherit="web.ListView.Buttons"
+       t-inherit-mode="extension">
+        <xpath expr="." position="inside">
+            <button type="button"
+                    class="btn btn-secondary"
+                    t-if="showUploadButton"
+                    t-on-click="onUploadDocument">
+                Upload
+            </button>
+        </xpath>
+    </t>
+</templates>

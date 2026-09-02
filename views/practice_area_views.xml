@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_law_practice_area_list" model="ir.ui.view">
+            <field name="name">law.practice.area.list</field>
+            <field name="model">law.practice.area</field>
+            <field name="arch" type="xml">
+                <list string="Practice Areas" editable="bottom">
+                    <field name="name"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+        <record id="action_law_practice_area" model="ir.actions.act_window">
+            <field name="name">Practice Areas</field>
+            <field name="res_model">law.practice.area</field>
+            <field name="view_mode">list</field>
+        </record>
+    </data>
+</odoo>

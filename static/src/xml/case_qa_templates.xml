@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+   <t t-name="law_case_review.FormView.CaseQAButton" t-inherit="web.FormView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-create-button']/button" position="after">
+            <div t-if="showCaseQAIcon" t-portal="'body'" class="o_case_qa_icon"
+                 t-att-style="caseQAState.positioned ? ('left:' + caseQAState.x + 'px; top:' + caseQAState.y + 'px;') : ''"
+                 t-on-pointerdown="onCaseQAIconPointerDown"
+                 t-on-click="onClickCaseQAIcon">
+                💬
+            </div>
+            <CaseQAPanel t-if="showCaseQAPanel" t-portal="'body'" resId="model.root.resId"/>
+        </xpath>
+    </t>
+
+    <t t-name="law_case_review.CaseQAPanel">
+        <div class="o_case_qa_panel d-flex flex-column overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center p-2 border-bottom flex-shrink-0">
+                <span class="fw-bold">
+                    <i class="fa fa-comments me-1"/> Case Q&amp;A
+                </span>
+                <div class="d-flex align-items-center gap-2">
+                    <a t-if="state.messages.length > 0" href="#"
+                       class="btn btn-sm btn-link text-muted"
+                       t-on-click.prevent="onClickClearChat">
+                        <i class="fa fa-trash me-1"/> Clear Chat
+                    </a>
+                    <button type="button" class="btn btn-sm btn-link text-muted" t-on-click="closePanel">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-grow-1 overflow-auto p-3" style="min-height: 0;">
+                <div t-if="state.messages.length === 0" class="text-muted text-center mt-4">
+                    Ask a question about this case to get started.
+                </div>
+                <div t-foreach="state.messages" t-as="msg" t-key="msg_index" class="mb-3">
+                    <div class="d-flex justify-content-end align-items-start gap-2 mb-2 w-100">
+                        <div class="bg-primary text-white rounded-4 shadow-sm px-3 py-2 text-break" style="max-width: 80%;">
+                            <span t-esc="msg.question"/>
+                        </div>
+                        <i class="fa fa-user-circle fa-lg text-muted mt-1"/>
+                    </div>
+                    <div class="d-flex justify-content-start align-items-start gap-2 w-100">
+                        <i class="fa fa-magic fa-lg text-primary mt-1"/>
+                        <div class="bg-light border rounded-4 shadow-sm px-3 py-2 text-break" style="max-width: 80%;">
+                            <span t-if="msg.answer" t-esc="msg.answer"/>
+                            <span t-else="" class="text-muted"><i class="fa fa-spinner fa-spin me-1"/> Thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-end p-2 border-top gap-2 flex-shrink-0">
+                <textarea
+                    class="form-control rounded-3"
+                    rows="1"
+                    placeholder="Ask a question about this case..."
+                    t-model="state.question"
+                    t-on-keydown="onKeydown"
+                    t-on-input="onInputResize"
+                    t-att-disabled="state.asking"/>
+                <button class="btn btn-primary rounded-circle"
+                        style="width: 38px; height: 38px;"
+                        t-on-click="onClickAsk"
+                        t-att-disabled="state.asking">
+                    <i class="fa fa-paper-plane"/>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

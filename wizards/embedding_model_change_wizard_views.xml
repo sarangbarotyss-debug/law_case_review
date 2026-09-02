@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_law_embedding_model_change_wizard_form" model="ir.ui.view">
+        <field name="name">law.embedding.model.change.wizard.form</field>
+        <field name="model">law.embedding.model.change.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Embedding Model Change">
+
+                <!-- Confirm stage -->
+                <group invisible="stage != 'confirm'">
+                    <div class="alert alert-warning d-flex align-items-start" role="alert">
+                        <i class="fa fa-exclamation-triangle me-2 mt-1" title="Warning"/>
+                        <div>
+                            <p class="mb-1">
+                                <strong>You are changing the active Embedding Model.</strong>
+                            </p>
+                            <p class="mb-0">
+                                Switching from <field name="old_model_id" readonly="1" nolabel="1" class="fw-bold"/>
+                                to <field name="new_model_id" readonly="1" nolabel="1" class="fw-bold"/>
+                                requires re-embedding existing clauses and document chunks so search results stay accurate.
+                                This may take a while depending on how much data exists.
+                            </p>
+                        </div>
+                    </div>
+                </group>
+
+                <!-- Progress stage: hosts the live polling widget -->
+                <group invisible="stage != 'progress'">
+                    <field name="done_count" widget="law_reembed_progress" nolabel="1" colspan="2"/>
+                    <field name="total_count" invisible="1"/>
+                    <field name="error_count" invisible="1"/>
+                </group>
+
+                <footer invisible="stage != 'confirm'">
+                    <button name="action_start_reembed" type="object" string="Re-embed" class="btn-primary"/>
+                    <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

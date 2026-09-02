@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Cases -->
+        <record id="rule_law_case_lawyer" model="ir.rule">
+            <field name="name">Law Case: Lawyer sees own cases only</field>
+            <field name="model_id" ref="model_law_case"/>
+            <field name="domain_force">[('lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_manager" model="ir.rule">
+            <field name="name">Law Case: Manager sees all cases</field>
+            <field name="model_id" ref="model_law_case"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Documents -->
+        <record id="rule_law_case_document_lawyer" model="ir.rule">
+            <field name="name">Law Case Document: Lawyer sees own case's documents</field>
+            <field name="model_id" ref="model_law_case_document"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_document_manager" model="ir.rule">
+            <field name="name">Law Case Document: Manager sees all documents</field>
+            <field name="model_id" ref="model_law_case_document"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Hearings -->
+        <record id="rule_law_case_hearing_lawyer" model="ir.rule">
+            <field name="name">Hearing: Lawyer sees own case's hearings</field>
+            <field name="model_id" ref="model_law_case_hearing"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_hearing_manager" model="ir.rule">
+            <field name="name">Hearing: Manager sees all hearings</field>
+            <field name="model_id" ref="model_law_case_hearing"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Parties -->
+        <record id="rule_law_case_party_lawyer" model="ir.rule">
+            <field name="name">Party: Lawyer sees own case's parties</field>
+            <field name="model_id" ref="model_law_case_party"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_party_manager" model="ir.rule">
+            <field name="name">Party: Manager sees all parties</field>
+            <field name="model_id" ref="model_law_case_party"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Q&A Log -->
+        <record id="rule_law_case_qa_log_lawyer" model="ir.rule">
+            <field name="name">Q&amp;A Log: Lawyer sees own case's Q&amp;A</field>
+            <field name="model_id" ref="model_law_case_qa_log"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_qa_log_manager" model="ir.rule">
+            <field name="name">Q&amp;A Log: Manager sees all Q&amp;A</field>
+            <field name="model_id" ref="model_law_case_qa_log"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Playbook Matches -->
+        <record id="rule_law_case_playbook_match_lawyer" model="ir.rule">
+            <field name="name">Playbook Match: Lawyer sees own case's matches</field>
+            <field name="model_id" ref="model_law_case_playbook_match"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_playbook_match_manager" model="ir.rule">
+            <field name="name">Playbook Match: Manager sees all matches</field>
+            <field name="model_id" ref="model_law_case_playbook_match"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+        <record id="rule_law_client_request_lawyer" model="ir.rule">
+            <field name="name">Client Request: Lawyer sees own only</field>
+            <field name="model_id" ref="model_law_client_request"/>
+            <field name="domain_force">[('lawyer_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+
+        <record id="rule_law_client_request_manager" model="ir.rule">
+            <field name="name">Client Request: Manager sees all</field>
+            <field name="model_id" ref="model_law_client_request"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <record id="rule_law_case_timeline_event_lawyer" model="ir.rule">
+            <field name="name">Timeline Event: Lawyer sees own case events only</field>
+            <field name="model_id" ref="model_law_case_timeline_event"/>
+            <field name="domain_force">[('case_id.lawyer_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+
+        <record id="rule_law_case_timeline_event_manager" model="ir.rule">
+            <field name="name">Timeline Event: Manager sees all</field>
+            <field name="model_id" ref="model_law_case_timeline_event"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Document Chunks -->
+        <record id="rule_law_case_document_chunk_lawyer" model="ir.rule">
+            <field name="name">Document Chunk: Lawyer sees own case's chunks</field>
+            <field name="model_id" ref="model_law_case_document_chunk"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_document_chunk_manager" model="ir.rule">
+            <field name="name">Document Chunk: Manager sees all chunks</field>
+            <field name="model_id" ref="model_law_case_document_chunk"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

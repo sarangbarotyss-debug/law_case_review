@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="dms_access_group_law_cases" model="dms.access.group">
+        <field name="name">Law Case Documents</field>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="explicit_user_ids" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="storage_law_cases" model="dms.storage">
+        <field name="name">Law Cases</field>
+        <field name="save_type">database</field>
+    </record>
+</odoo>

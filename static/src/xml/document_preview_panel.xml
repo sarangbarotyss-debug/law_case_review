@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.DocumentPreviewPanel">
+        <div class="o_document_preview_widget">
+            <div class="o_document_preview_panel">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong>Document Preview</strong>
+                    <div style="display:flex; align-items:center; gap:4px">
+                        <t t-if="hasFile and isImage">
+                            <button type="button" class="btn btn-sm btn-secondary" t-on-click="zoomOut">-</button>
+                            <button type="button" class="btn btn-sm btn-secondary" t-on-click="zoomReset">
+                                <t t-esc="Math.round(zoomState.level * 100) + '%'"/>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" t-on-click="zoomIn">+</button>
+                        </t>
+                        <button type="button" class="btn btn-sm btn-secondary" t-on-click="closePanel">X</button>
+                    </div>
+                </div>
+                <div t-if="!hasFile" style="padding: 20px; text-align: center; color: #888;">
+                    No preview available
+                </div>
+                <div t-if="hasFile and (isPdf or isImage)" class="o_document_preview_zoom_wrapper">
+                    <div t-att-style="zoomStyle" class="o_document_preview_zoom_content">
+                        <iframe t-if="isPdf" t-att-src="pdfUrl"/>
+                        <img t-if="isImage" t-att-src="fileUrl"/>
+                    </div>
+                </div>
+                <div t-if="hasFile and !isPdf and !isImage" style="padding: 20px; text-align: center; color: #888;">
+                    Preview not supported for this file type
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.EmbeddingReembedProgress">
+        <div class="o_law_reembed d-flex justify-content-center p-2">
+            <div class="card shadow-sm" style="max-width: 520px; width: 100%;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa fa-refresh fa-lg text-primary me-2"/>
+                        <h4 class="mb-0">Re-embedding in Progress</h4>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">
+                            <t t-esc="state.done"/> / <t t-esc="state.total"/> processed
+                        </span>
+                        <span t-if="state.errors > 0" class="badge text-bg-danger">
+                            <t t-esc="state.errors"/> errors
+                        </span>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 22px;">
+                        <div t-attf-class="progress-bar {{ state.status === 'done' ? 'bg-success' : 'progress-bar-striped progress-bar-animated' }}"
+                             role="progressbar"
+                             t-attf-style="width: {{progressPercent}}%"
+                             t-esc="progressPercent + '%'"/>
+                    </div>
+
+                    <div t-if="state.status === 'running'" class="d-flex align-items-center text-muted">
+                        <i class="fa fa-circle-o-notch fa-spin me-2"/>
+                        <span>Processing in progress, please keep this window open...</span>
+                    </div>
+                    <div t-if="state.status === 'done'" class="alert alert-success d-flex align-items-center mb-0" role="alert">
+                        <i class="fa fa-check-circle me-2"/>
+                        <span>Re-embedding complete. All records are now up to date.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

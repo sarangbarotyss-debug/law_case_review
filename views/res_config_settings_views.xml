@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_case_review_settings" model="ir.ui.view">
+        <field name="name">law.case.review.settings</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Law Case Review" string="Law Case Review" name="law_case_review" logo="/law_case_review/static/description/icon.png">
+                    <block title="AI Configuration" name="law_ai_setting_container">
+                        <setting id="law_ai_provider_setting">
+                            <field name="law_ai_provider"/>
+                        </setting>
+                        <setting id="law_ai_model_setting">
+                            <field name="law_ai_model_id" placeholder="e.g. gpt-4o"/>
+                        </setting>
+                        <setting id="law_ai_api_key_setting">
+                            <field name="law_ai_api_key" password="True"/>
+                        </setting>
+                    </block>
+                    <block title="Embedding Configuration" name="law_embedding_setting_container">
+                        <setting id="law_embedding_provider_setting">
+                            <field name="law_embedding_provider"/>
+                        </setting>
+                        <setting id="law_embedding_model_setting">
+                            <field name="law_embedding_model_id" placeholder="e.g. mistral-embed"/>
+                        </setting>
+                        <setting id="law_mistral_api_key_setting" invisible="law_embedding_provider != 'mistral'">
+                            <field name="law_mistral_api_key" password="True"/>
+                        </setting>
+                        <setting id="law_google_api_key_setting" invisible="law_embedding_provider != 'google'">
+                            <field name="law_google_api_key" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

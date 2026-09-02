@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_law_ai_model_option_list" model="ir.ui.view">
+        <field name="name">law.ai.model.option.list</field>
+        <field name="model">law.ai.model.option</field>
+        <field name="arch" type="xml">
+            <list string="AI Models" editable="bottom">
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="model_string"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_law_ai_model_option" model="ir.actions.act_window">
+        <field name="name">AI Models</field>
+        <field name="res_model">law.ai.model.option</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

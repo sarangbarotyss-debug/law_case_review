@@ -1,0 +1,3363 @@
+=== ./security/law_case_security.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_law_case_lawyer" model="res.groups">
+            <field name="name">Law Case Review / Lawyer</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="group_law_case_manager" model="res.groups">
+            <field name="name">Law Case Review / Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_law_case_lawyer'))]"/>
+            <field name="user_ids" eval="[(4, ref('base.user_admin'))]"/>
+        </record>
+    </data>
+</odoo>
+
+=== ./security/law_case_record_rules.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Cases -->
+        <record id="rule_law_case_lawyer" model="ir.rule">
+            <field name="name">Law Case: Lawyer sees own cases only</field>
+            <field name="model_id" ref="model_law_case"/>
+            <field name="domain_force">[('lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_manager" model="ir.rule">
+            <field name="name">Law Case: Manager sees all cases</field>
+            <field name="model_id" ref="model_law_case"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Documents -->
+        <record id="rule_law_case_document_lawyer" model="ir.rule">
+            <field name="name">Law Case Document: Lawyer sees own case's documents</field>
+            <field name="model_id" ref="model_law_case_document"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_document_manager" model="ir.rule">
+            <field name="name">Law Case Document: Manager sees all documents</field>
+            <field name="model_id" ref="model_law_case_document"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Hearings -->
+        <record id="rule_law_case_hearing_lawyer" model="ir.rule">
+            <field name="name">Hearing: Lawyer sees own case's hearings</field>
+            <field name="model_id" ref="model_law_case_hearing"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_hearing_manager" model="ir.rule">
+            <field name="name">Hearing: Manager sees all hearings</field>
+            <field name="model_id" ref="model_law_case_hearing"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Parties -->
+        <record id="rule_law_case_party_lawyer" model="ir.rule">
+            <field name="name">Party: Lawyer sees own case's parties</field>
+            <field name="model_id" ref="model_law_case_party"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_party_manager" model="ir.rule">
+            <field name="name">Party: Manager sees all parties</field>
+            <field name="model_id" ref="model_law_case_party"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Q&A Log -->
+        <record id="rule_law_case_qa_log_lawyer" model="ir.rule">
+            <field name="name">Q&amp;A Log: Lawyer sees own case's Q&amp;A</field>
+            <field name="model_id" ref="model_law_case_qa_log"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_qa_log_manager" model="ir.rule">
+            <field name="name">Q&amp;A Log: Manager sees all Q&amp;A</field>
+            <field name="model_id" ref="model_law_case_qa_log"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Playbook Matches -->
+        <record id="rule_law_case_playbook_match_lawyer" model="ir.rule">
+            <field name="name">Playbook Match: Lawyer sees own case's matches</field>
+            <field name="model_id" ref="model_law_case_playbook_match"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_playbook_match_manager" model="ir.rule">
+            <field name="name">Playbook Match: Manager sees all matches</field>
+            <field name="model_id" ref="model_law_case_playbook_match"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+        <record id="rule_law_client_request_lawyer" model="ir.rule">
+            <field name="name">Client Request: Lawyer sees own only</field>
+            <field name="model_id" ref="model_law_client_request"/>
+            <field name="domain_force">[('lawyer_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+
+        <record id="rule_law_client_request_manager" model="ir.rule">
+            <field name="name">Client Request: Manager sees all</field>
+            <field name="model_id" ref="model_law_client_request"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <record id="rule_law_case_timeline_event_lawyer" model="ir.rule">
+            <field name="name">Timeline Event: Lawyer sees own case events only</field>
+            <field name="model_id" ref="model_law_case_timeline_event"/>
+            <field name="domain_force">[('case_id.lawyer_id','=',user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+
+        <record id="rule_law_case_timeline_event_manager" model="ir.rule">
+            <field name="name">Timeline Event: Manager sees all</field>
+            <field name="model_id" ref="model_law_case_timeline_event"/>
+            <field name="domain_force">[(1,'=',1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+        <!-- Document Chunks -->
+        <record id="rule_law_case_document_chunk_lawyer" model="ir.rule">
+            <field name="name">Document Chunk: Lawyer sees own case's chunks</field>
+            <field name="model_id" ref="model_law_case_document_chunk"/>
+            <field name="domain_force">[('case_id.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_lawyer'))]"/>
+        </record>
+        <record id="rule_law_case_document_chunk_manager" model="ir.rule">
+            <field name="name">Document Chunk: Manager sees all chunks</field>
+            <field name="model_id" ref="model_law_case_document_chunk"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>
+
+=== ./security/ir.model.access.csv ===
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_law_case_lawyer,law.case,model_law_case,group_law_case_lawyer,1,1,1,0
+access_law_case_manager,law.case,model_law_case,group_law_case_manager,1,1,1,1
+access_law_case_document_lawyer,law.case.document,model_law_case_document,group_law_case_lawyer,1,1,1,0
+access_law_case_document_manager,law.case.document,model_law_case_document,group_law_case_manager,1,1,1,1
+access_law_client_request_lawyer,law.client.request,law_case_review.model_law_client_request,group_law_case_lawyer,1,1,1,0
+access_law_client_request_manager,law.client.request,law_case_review.model_law_client_request,group_law_case_manager,1,1,1,1
+access_client_request_upload_wizard,client.request.upload.wizard,law_case_review.model_client_request_upload_wizard,group_law_case_lawyer,1,1,1,1
+access_law_case_playbook_match_lawyer,law.case.playbook.match,law_case_review.model_law_case_playbook_match,group_law_case_lawyer,1,1,1,0
+access_law_case_playbook_match_manager,law.case.playbook.match,law_case_review.model_law_case_playbook_match,group_law_case_manager,1,1,1,1
+access_law_case_document_chunk_lawyer,law.case.document.chunk,law_case_review.model_law_case_document_chunk,group_law_case_lawyer,1,0,0,0
+access_law_case_document_chunk_manager,law.case.document.chunk,law_case_review.model_law_case_document_chunk,group_law_case_manager,1,1,1,1
+access_law_case_qa_log_lawyer,law.case.qa.log,law_case_review.model_law_case_qa_log,group_law_case_lawyer,1,1,1,0
+access_law_case_qa_log_manager,law.case.qa.log,law_case_review.model_law_case_qa_log,group_law_case_manager,1,1,1,1
+access_law_case_party_lawyer,law.case.party,law_case_review.model_law_case_party,group_law_case_lawyer,1,1,1,1
+access_law_case_hearing_lawyer,law.case.hearing,law_case_review.model_law_case_hearing,group_law_case_lawyer,1,1,1,1
+access_law_practice_area_lawyer,law.practice.area,law_case_review.model_law_practice_area,group_law_case_lawyer,1,0,0,0
+access_law_practice_area_manager,law.practice.area,law_case_review.model_law_practice_area,group_law_case_manager,1,1,1,1
+access_law_playbook_source_lawyer,law.playbook.source,law_case_review.model_law_playbook_source,group_law_case_lawyer,1,0,0,0
+access_law_playbook_source_manager,law.playbook.source,law_case_review.model_law_playbook_source,group_law_case_manager,1,1,1,1
+access_law_playbook_clause_lawyer,law.playbook.clause,law_case_review.model_law_playbook_clause,group_law_case_lawyer,1,0,0,0
+access_law_playbook_clause_manager,law.playbook.clause,law_case_review.model_law_playbook_clause,group_law_case_manager,1,1,1,1
+access_law_ai_model_option_manager,law.ai.model.option,law_case_review.model_law_ai_model_option,group_law_case_manager,1,1,1,1
+access_law_embedding_model_option_manager,law.embedding.model.option,law_case_review.model_law_embedding_model_option,group_law_case_manager,1,1,1,1
+access_law_embedding_model_change_wizard_manager,law.embedding.model.change.wizard,law_case_review.model_law_embedding_model_change_wizard,group_law_case_manager,1,1,1,1
+access_law_ai_cache_manager,law.ai.cache,law_case_review.model_law_ai_cache,group_law_case_manager,1,1,1,1
+access_law_case_timeline_event_lawyer,law.case.timeline.event.lawyer,model_law_case_timeline_event,group_law_case_lawyer,1,1,1,0
+access_law_case_timeline_event_manager,law.case.timeline.event.manager,model_law_case_timeline_event,group_law_case_manager,1,1,1,1
+
+=== ./wizards/embedding_model_change_wizard_views.xml ===
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_law_embedding_model_change_wizard_form" model="ir.ui.view">
+        <field name="name">law.embedding.model.change.wizard.form</field>
+        <field name="model">law.embedding.model.change.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Embedding Model Change">
+
+                <!-- Confirm stage -->
+                <group invisible="stage != 'confirm'">
+                    <div class="alert alert-warning d-flex align-items-start" role="alert">
+                        <i class="fa fa-exclamation-triangle me-2 mt-1" title="Warning"/>
+                        <div>
+                            <p class="mb-1">
+                                <strong>You are changing the active Embedding Model.</strong>
+                            </p>
+                            <p class="mb-0">
+                                Switching from <field name="old_model_id" readonly="1" nolabel="1" class="fw-bold"/>
+                                to <field name="new_model_id" readonly="1" nolabel="1" class="fw-bold"/>
+                                requires re-embedding existing clauses and document chunks so search results stay accurate.
+                                This may take a while depending on how much data exists.
+                            </p>
+                        </div>
+                    </div>
+                </group>
+
+                <!-- Progress stage: hosts the live polling widget -->
+                <group invisible="stage != 'progress'">
+                    <field name="done_count" widget="law_reembed_progress" nolabel="1" colspan="2"/>
+                    <field name="total_count" invisible="1"/>
+                    <field name="error_count" invisible="1"/>
+                </group>
+
+                <footer invisible="stage != 'confirm'">
+                    <button name="action_start_reembed" type="object" string="Re-embed" class="btn-primary"/>
+                    <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+
+=== ./wizards/embedding_model_change_wizard.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+
+
+class LawEmbeddingModelChangeWizard(models.TransientModel):
+    _name = 'law.embedding.model.change.wizard'
+    _description = 'Confirm Embedding Model Change and Re-embed'
+
+    old_model_id = fields.Many2one('law.embedding.model.option', string='Current Model', readonly=True)
+    new_model_id = fields.Many2one('law.embedding.model.option', string='New Model', readonly=True)
+    stage = fields.Selection([
+        ('confirm', 'Confirm'),
+        ('progress', 'In Progress'),
+    ], default='confirm')
+    done_count = fields.Integer(default=0)
+    total_count = fields.Integer(default=0)
+    error_count = fields.Integer(default=0)
+
+    def action_cancel(self):
+        # Old model was already restored server-side when this wizard was
+        # created (see res_config_settings.execute()). Nothing else to do.
+        return {'type': 'ir.actions.act_window_close'}
+
+    def action_start_reembed(self):
+        self.ensure_one()
+        from ..models.reembed_service import count_missing_for_model
+
+        ICP = self.env['ir.config_parameter'].sudo()
+        ICP.set_param('law_case_review.embedding_model_id', str(self.new_model_id.id))
+
+        total = count_missing_for_model(self.env, self.new_model_id)
+        self.write({
+            'stage': 'progress',
+            'total_count': total,
+            'done_count': 0,
+            'error_count': 0,
+        })
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'law.embedding.model.change.wizard',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    def action_process_batch(self, batch_size=5):
+        """
+        Called repeatedly by the JS widget until all records are done.
+        Processes one batch, updates and returns running totals.
+        """
+        self.ensure_one()
+        from ..models.reembed_service import process_batch_for_model
+
+        processed, errors = process_batch_for_model(self.env, self.new_model_id, batch_size=batch_size)
+        self.done_count += processed
+        self.error_count += errors
+        self.env.cr.commit()
+
+        return {
+            'total_count': self.total_count,
+            'done_count': self.done_count,
+            'error_count': self.error_count,
+            'is_complete': self.done_count >= self.total_count,
+        }
+
+=== ./wizards/client_request_upload_wizard_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_client_request_upload_wizard_form" model="ir.ui.view">
+            <field name="name">view.client.request.upload.wizard.form</field>
+            <field name="model">client.request.upload.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Upload Client Request Document">
+
+                    <!-- Upload screen -->
+                    <group invisible="stage != 'upload'">
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <div class="alert alert-danger" role="alert" invisible="not error_message">
+                            <field name="error_message" readonly="1" nolabel="1"/>
+                        </div>
+                    </group>
+
+                    <!-- Progress screen -->
+                    <group invisible="stage != 'progress'">
+                        <field name="client_request_id" widget="law_client_request_progress" nolabel="1" colspan="2"/>
+                    </group>
+
+                    <footer invisible="stage != 'upload'">
+                        <button name="action_extract_and_create" type="object" class="btn-primary" string="Extract &amp; Create"/>
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-secondary"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+        <record id="action_client_request_upload_wizard" model="ir.actions.act_window">
+            <field name="name">action.client.request.upload.wizard</field>
+            <field name="res_model">client.request.upload.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>
+
+=== ./wizards/__init__.py ===
+from . import client_request_upload_wizard
+from . import embedding_model_change_wizard
+
+=== ./wizards/client_request_upload_wizard.py ===
+# -*- coding: utf-8 -*-
+from odoo import api, models, fields
+
+
+class ClientRequestUploadWizard(models.TransientModel):
+    _name = "client.request.upload.wizard"
+    _description = "client_request_upload_wizard"
+
+    file = fields.Binary(string="Document", required=True)
+    file_name = fields.Char(string="File Name")
+    stage = fields.Selection([
+        ('upload', 'Upload'),
+        ('progress', 'Progress'),
+    ], default='upload')
+    error_message = fields.Char(readonly=True)
+    client_request_id = fields.Many2one('law.client.request', readonly=True)
+
+    def action_extract_and_create(self):
+        self.ensure_one()
+        self.error_message = False
+
+        record = self.env['law.client.request'].create({
+            'file': self.file,
+            'file_name': self.file_name,
+            'processing_state': 'pending',
+        })
+        record.with_delay(
+            description="Extract client request document: %s" % self.file_name
+        ).button_process_extraction_job()
+
+        self.write({
+            'stage': 'progress',
+            'client_request_id': record.id,
+        })
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'client.request.upload.wizard',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    def action_cancel(self):
+        return {'type': 'ir.actions.act_window_close'}
+
+    def action_handle_failure(self):
+        self.ensure_one()
+        self.write({
+            'stage': 'upload',
+            'error_message': "Extraction failed, please try again.",
+            'client_request_id': False,
+        })
+
+=== ./docling_service/main.py ===
+from fastapi import FastAPI, UploadFile, File
+from docling.document_converter import DocumentConverter
+import shutil
+import tempfile
+
+app = FastAPI()
+converter = DocumentConverter()
+
+
+@app.post("/extract-text")
+async def extract_text(file: UploadFile = File(...)):
+    with tempfile.NamedTemporaryFile(delete=False, suffix=file.filename) as tmp:
+        shutil.copyfileobj(file.file, tmp)
+        tmp_path = tmp.name
+
+    result = converter.convert(tmp_path)
+    extracted_text = result.document.export_to_markdown()
+
+    return {"text": extracted_text}
+
+=== ./hooks.py ===
+# -*- coding: utf-8 -*-
+
+SUPPORTED_DIMENSIONS = [768, 1024, 1536, 3072]
+
+
+def post_init_hook(env):
+    """
+    Sets up pgvector for semantic search: enables the extension, adds one
+    vector column per supported embedding dimension (see SUPPORTED_DIMENSIONS),
+    and builds a similarity-search index on each. Safe to re-run (all
+    statements use IF NOT EXISTS), so this also works cleanly on module
+    upgrade.
+
+    Why multiple columns: a Postgres `vector` column has one fixed
+    dimension. Different embedding models (Mistral, OpenAI, Google, etc.)
+    output different dimensions. Rather than lock the system to one
+    dimension permanently, we prepare a column for each realistic size in
+    advance, so switching the active embedding model never requires a live
+    schema migration - it just uses a different, already-existing column.
+    """
+    cr = env.cr
+
+    cr.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+
+    for table in ('law_playbook_clause', 'law_case_document_chunk'):
+        for dim in SUPPORTED_DIMENSIONS:
+            column = f"embedding_vector_{dim}"
+            index_name = f"{table}_{column}_hnsw_idx"
+
+            cr.execute(f"""
+                ALTER TABLE {table}
+                ADD COLUMN IF NOT EXISTS {column} vector({dim});
+            """)
+
+            cr.execute("""
+                SELECT indexname FROM pg_indexes
+                WHERE tablename = %s AND indexname = %s;
+            """, [table, index_name])
+            if not cr.fetchone():
+                if dim > 2000:
+                    # HNSW indexes cap at 2000 dims natively; halfvec (half
+                    # precision) raises that ceiling to 4000, at the cost of
+                    # minor precision loss - acceptable for similarity search.
+                    cr.execute(f"""
+                        CREATE INDEX {index_name}
+                        ON {table} USING hnsw (({column}::halfvec({dim})) halfvec_cosine_ops);
+                    """)
+                else:
+                    cr.execute(f"""
+                        CREATE INDEX {index_name}
+                        ON {table} USING hnsw ({column} vector_cosine_ops);
+                    """)
+
+=== ./data/dms_data.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="dms_access_group_law_cases" model="dms.access.group">
+        <field name="name">Law Case Documents</field>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="explicit_user_ids" eval="[(4, ref('base.user_admin'))]"/>
+    </record>
+
+    <record id="storage_law_cases" model="dms.storage">
+        <field name="name">Law Cases</field>
+        <field name="save_type">database</field>
+    </record>
+</odoo>
+
+=== ./data/queue_job_data.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="channel_playbook_ingestion" model="queue.job.channel">
+        <field name="name">playbook_ingestion</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+
+    <record id="job_function_law_playbook_source_process" model="queue.job.function">
+        <field name="model_id" ref="model_law_playbook_source"/>
+        <field name="method">button_process_job</field>
+        <field name="channel_id" ref="channel_playbook_ingestion"/>
+        <field name="allow_commit" eval="True"/>
+    </record>
+
+    <record id="job_function_law_playbook_source_process_chunk" model="queue.job.function">
+        <field name="model_id" ref="model_law_playbook_source"/>
+        <field name="method">button_process_chunk_job</field>
+        <field name="channel_id" ref="channel_playbook_ingestion"/>
+        <field name="allow_commit" eval="True"/>
+    </record>
+
+    <record id="job_function_law_client_request_extraction" model="queue.job.function">
+        <field name="model_id" ref="model_law_client_request"/>
+        <field name="method">button_process_extraction_job</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+    </record>
+
+    <record id="job_function_law_case_playbook_comparison" model="queue.job.function">
+        <field name="model_id" ref="model_law_case"/>
+        <field name="method">action_process_playbook_comparison</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="allow_commit">True</field>
+    </record>
+</odoo>
+
+=== ./data/ir_sequence_data.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="seq_law_case" model="ir.sequence">
+        <field name="name">Law Case Reference</field>
+        <field name="code">law.case</field>
+        <field name="prefix">CASE/%(year)s/%(month)s/</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">True</field>
+    </record>
+</odoo>
+
+=== ./models/law_case_timeline_event.py ===
+# -*- coding: utf-8 -*-
+
+from odoo import api, models, fields
+
+
+class LawCaseTimelineEvent(models.Model):
+    _name = 'law.case.timeline.event'
+    _description = 'Case Timeline Event'
+    _order = 'event_date asc, id asc'
+
+    case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade', index=True)
+    document_id = fields.Many2one('law.case.document', string='Source Document', ondelete='set null')
+
+    event_date = fields.Date(string='Event Date')
+    event_date_text = fields.Char(string='Date (as in document)')
+
+    title = fields.Char(string='Title', required=True)
+    description = fields.Text(string='Description')
+    event_type = fields.Selection([
+        ('filing', 'Filing'),
+        ('hearing', 'Hearing'),
+        ('notice', 'Notice'),
+        ('agreement', 'Agreement'),
+        ('incident', 'Incident'),
+        ('correspondence', 'Correspondence'),
+        ('other', 'Other'),
+    ], string='Event Type', default='other')
+
+    source_snippet = fields.Text(string='Source Snippet')
+
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('confirmed', 'Confirmed'),
+        ('rejected', 'Rejected'),
+    ], string='Status', default='draft', required=True)
+
+    manually_edited = fields.Boolean(string='Manually Edited', default=False)
+
+    def action_confirm(self):
+        self.write({'state': 'confirmed'})
+
+    def action_reject(self):
+        self.write({'state': 'rejected'})
+
+    def write(self, vals):
+        # if a lawyer edits date/title/description on a draft, flag it as human-corrected
+        tracked_fields = {'event_date', 'event_date_text', 'title', 'description'}
+        if tracked_fields.intersection(vals.keys()) and 'manually_edited' not in vals:
+            for rec in self:
+                if rec.state == 'draft':
+                    vals_copy = dict(vals)
+                    vals_copy['manually_edited'] = True
+                    super(LawCaseTimelineEvent, rec).write(vals_copy)
+                else:
+                    super(LawCaseTimelineEvent, rec).write(vals)
+            return True
+        return super().write(vals)
+
+    def action_preview_document(self):
+        self.ensure_one()
+        if not self.document_id or not self.document_id.file:
+            return
+        attachment = self.env['ir.attachment'].search([
+            ('res_model', '=', 'law.case.document'),
+            ('res_id', '=', self.document_id.id),
+            ('res_field', '=', 'file'),
+        ], limit=1)
+        if not attachment:
+            return
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/%s?download=false' % attachment.id,
+            'target': 'new',
+        }
+
+=== ./models/law_embedding_model_option.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+
+SUPPORTED_DIMENSIONS = [768, 1024, 1536, 3072]
+
+
+class LawEmbeddingModelOption(models.Model):
+    _name = 'law.embedding.model.option'
+    _description = 'Available Embedding Model Option for Law Case Review'
+    _order = 'provider, name'
+
+    name = fields.Char(string='Display Name', required=True)
+    provider = fields.Selection([
+        ('mistral', 'Mistral'),
+        ('google', 'Google'),
+    ], string='Provider', required=True)
+    model_string = fields.Char(string='Model String', required=True)
+    dimension = fields.Integer(
+        string='Vector Dimension',
+        required=True,
+        help="The length of the embedding vector this model produces, e.g. 1024. "
+             "Used to detect incompatible embeddings if the active model changes.",
+    )
+    active = fields.Boolean(string='Active', default=True)
+
+    @api.constrains('dimension')
+    def _check_dimension_supported(self):
+        for rec in self:
+            if rec.dimension not in SUPPORTED_DIMENSIONS:
+                raise ValidationError(
+                    "Vector Dimension %d is not supported. Supported dimensions are: %s.\n"
+                    "Adding a new dimension requires a schema update - contact your developer."
+                    % (rec.dimension, ', '.join(str(d) for d in SUPPORTED_DIMENSIONS))
+                )
+
+=== ./models/playbook_ingestion_service.py ===
+# -*- coding: utf-8 -*-
+import base64
+import json
+import requests
+from ..services import ai_provider_service
+from ..services.embedding_service import EmbeddingService
+import re
+
+
+def run_ocr(file_data, file_name):
+    file_content = base64.b64decode(file_data)
+    response = requests.post(
+        'http://localhost:8500/extract-text',
+        files={'file': (file_name, file_content)},
+        timeout=1800
+    )
+    if response.status_code != 200:
+        raise Exception('OCR extraction failed.')
+    return response.json().get('text')
+
+
+def split_into_chunks(text, max_chunk_size=4000):
+    raw_paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+
+    heading_pattern = re.compile(r'^##\s+\d+[A-Z]?\.')
+    merged_paragraphs = []
+    i = 0
+    while i < len(raw_paragraphs):
+        para = raw_paragraphs[i]
+        if heading_pattern.match(para):
+            group = [para]
+            j = i + 1
+            while j < len(raw_paragraphs) and not heading_pattern.match(raw_paragraphs[j]):
+                group.append(raw_paragraphs[j])
+                j += 1
+            merged_paragraphs.append('\n\n'.join(group))
+            i = j
+        else:
+            merged_paragraphs.append(para)
+            i += 1
+
+    chunks = []
+    current = ""
+    for para in merged_paragraphs:
+        if len(current) + len(para) + 2 > max_chunk_size and current:
+            chunks.append(current)
+            current = para
+        else:
+            current = current + "\n\n" + para if current else para
+
+    if current:
+        chunks.append(current)
+
+    return chunks
+
+
+def split_and_dispatch_chunks(env, source):
+    source.write({'state': 'processing'})
+    env.cr.commit()
+
+    try:
+        text = run_ocr(source.file, source.file_name)
+        source.write({'ocr_text': text})
+        env.cr.commit()
+    except Exception as e:
+        source.write({'state': 'error'})
+        env.cr.commit()
+        raise Exception('OCR step failed: %s' % str(e))
+
+    chunks = split_into_chunks(text)
+
+    source.write({
+        'chunk_count': len(chunks),
+        'chunk_done_count': 0,
+    })
+    env.cr.commit()
+
+    for i, chunk in enumerate(chunks):
+        source.with_delay(description="Process chunk %d of source: %s" % (i, source.name)).button_process_chunk_job(i, chunk)
+
+
+def process_single_chunk(env, source, chunk_index, chunk_text):
+    try:
+        clauses = extract_clauses_from_chunk(env, chunk_text)
+    except Exception as e:
+        env['ir.logging'].sudo().create({
+            'name': 'law_case_review',
+            'type': 'server',
+            'level': 'ERROR',
+            'message': 'Chunk %d extraction failed for source %d: %s' % (chunk_index, source.id, str(e)),
+            'path': 'law_case_review.playbook_ingestion',
+            'func': 'process_single_chunk',
+            'line': '0',
+        })
+        clauses = []
+
+    existing_clauses = env['law.playbook.clause'].search([('source_id', '=', source.id)])
+    seen_numbers = set(existing_clauses.mapped('clause_number'))
+
+    for clause in clauses:
+        number = clause.get('clause_number')
+        if not number or number in seen_numbers:
+            continue
+        seen_numbers.add(number)
+
+        clause_text = clause.get('text') or ''
+        title = clause.get('title') or ''
+
+        try:
+            embedding_input = f"Article {number}: {title}. {title}. {clause_text[:200]}"
+            embedding_vector = EmbeddingService.embed(env, embedding_input)
+            model_option = EmbeddingService.get_active_model(env)
+            embedding_model = model_option.model_string
+        except Exception as e:
+            env['law.playbook.clause'].create({
+                'source_id': source.id,
+                'clause_number': number,
+                'title': title,
+                'text': clause_text,
+            })
+            continue
+
+        new_clause = env['law.playbook.clause'].create({
+            'source_id': source.id,
+            'clause_number': number,
+            'title': title,
+            'text': clause_text,
+            'embedding_model': embedding_model,
+        })
+        EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', new_clause.id, embedding_vector, model_option.dimension)
+
+    source.write({'chunk_done_count': source.chunk_done_count + 1 })
+    env.cr.commit()
+
+    if source.chunk_done_count >= source.chunk_count:
+        source.write({'state': 'done'})
+        env.cr.commit()
+
+
+def extract_clauses_from_chunk(env, chunk_text):
+    prompt = (
+        "This is a piece of a legal document. Find every distinct Article or Section "
+        "in this text. For each one, give me the exact number, title, and full text.\n"
+        "Reply ONLY with JSON in this exact format, no explanation, no markdown:\n"
+        "[{\"clause_number\": \"\", \"title\": \"\", \"text\": \"\"}]\n\n"
+        "If no complete article/section is found in this text, reply with an empty list: []\n\n"
+        "Text:\n" + chunk_text
+    )
+    answer = ai_provider_service.call_llm(env, prompt)
+    return json.loads(answer)
+
+
+def process_playbook_source(env, source):
+    source.write({'state': 'processing'})
+    env.cr.commit()
+
+    try:
+        text = run_ocr(source.file, source.file_name)
+        source.write({'ocr_text': text})
+        env.cr.commit()
+    except Exception as e:
+        source.write({'state': 'error'})
+        env.cr.commit()
+        raise Exception('OCR step failed: %s' % str(e))
+
+    chunks = split_into_chunks(text)
+
+    existing_clauses = env['law.playbook.clause'].search([('source_id', '=', source.id)])
+    seen_numbers = set(existing_clauses.mapped('clause_number'))
+
+    for i, chunk in enumerate(chunks):
+        try:
+            clauses = extract_clauses_from_chunk(env, chunk)
+        except Exception as e:
+            env['ir.logging'].sudo().create({
+                'name': 'law_case_review',
+                'type': 'server',
+                'level': 'ERROR',
+                'message': 'Chunk %d extraction failed for source %d: %s' % (i, source.id, str(e)),
+                'path': 'law_case_review.playbook_ingestion',
+                'func': 'process_playbook_source',
+                'line': '0',
+            })
+            continue
+
+        for clause in clauses:
+            number = clause.get('clause_number')
+            if not number or number in seen_numbers:
+                continue
+            seen_numbers.add(number)
+
+            clause_text = clause.get('text') or ''
+            title = clause.get('title') or ''
+
+            try:
+                embedding_input = f"Article {number}: {title}. {title}. {clause_text[:200]}"
+                embedding_vector = EmbeddingService.embed(env, embedding_input)
+                model_option = EmbeddingService.get_active_model(env)
+                embedding_model = model_option.model_string
+            except Exception as e:
+                env['law.playbook.clause'].create({
+                    'source_id': source.id,
+                    'clause_number': number,
+                    'title': title,
+                    'text': clause_text,
+                })
+                env.cr.commit()
+                continue
+
+            new_clause = env['law.playbook.clause'].create({
+                'source_id': source.id,
+                'clause_number': number,
+                'title': title,
+                'text': clause_text,
+                'embedding_model': embedding_model,
+            })
+            EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', new_clause.id, embedding_vector, model_option.dimension)
+
+        env.cr.commit()
+
+    source.write({'state': 'done'})
+    env.cr.commit()
+
+
+def reembed_missing_clauses(env, source):
+    from odoo.addons.law_case_review.services.embedding_service import EmbeddingService
+
+    env.cr.execute("""
+        SELECT id FROM law_playbook_clause
+        WHERE source_id = %s
+        AND embedding_vector_768 IS NULL
+        AND embedding_vector_1024 IS NULL
+        AND embedding_vector_1536 IS NULL
+        AND embedding_vector_3072 IS NULL
+    """, [source.id])
+    missing_ids = [row[0] for row in env.cr.fetchall()]
+    missing = env['law.playbook.clause'].browse(missing_ids)
+
+    print("Found %d clause(s) missing embeddings." % len(missing))
+    for clause in missing:
+        try:
+            embedding_input = f"Article {clause.clause_number}: {clause.title or ''}. {clause.title or ''}. {(clause.text or '')[:200]}"
+            embedding_vector = EmbeddingService.embed(env, embedding_input)
+            model_option = EmbeddingService.get_active_model(env)
+            clause.write({'embedding_model': model_option.model_string})
+            EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', clause.id, embedding_vector, model_option.dimension)
+            env.cr.commit()
+            print("Re-embedded:", clause.clause_number)
+        except Exception as e:
+            print("Still failed:", clause.clause_number, "-", str(e))
+
+=== ./models/law_ai_cache.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawAICache(models.Model):
+    _name = 'law.ai.cache'
+    _description = 'AI Response Cache for Law Case Review'
+
+    cache_key = fields.Char(string='Cache Key', required=True, index=True)
+    cache_type = fields.Selection([
+        ('embedding', 'Embedding'),
+    ], string='Cache Type', required=True, default='embedding')
+    value = fields.Text(string='Cached Value', required=True)
+
+=== ./models/case_document_chunk.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawCaseDocumentChunk(models.Model):
+    _name = 'law.case.document.chunk'
+    _description = 'Law Case Document Chunk (for semantic search)'
+
+    document_id = fields.Many2one('law.case.document', string='Document', required=True, ondelete='cascade')
+
+    case_id = fields.Many2one('law.case', string='Case', related='document_id.case_id', store=True, readonly=True)
+
+    chunk_text = fields.Text(string='Chunk Text')
+
+    chunk_index = fields.Integer(string='Chunk Order')
+    
+    embedding_model = fields.Char(string='Embedding Model Used')
+
+=== ./models/law_case.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError
+
+
+class LawCase(models.Model):
+    _name = 'law.case'
+    _description = 'Law Case'
+
+    name = fields.Char(string='Case Reference', required=True, readonly=True, copy=False, default='New')
+    client_id = fields.Many2one('res.partner', string='Client', required=True)
+    lawyer_id = fields.Many2one('res.users', string='Assigned Lawyer', default=lambda self: self.env.user)
+    document_ids = fields.One2many('law.case.document', 'case_id', string='Documents')
+    match_ids = fields.One2many('law.case.playbook.match', 'case_id', string='Playbook Matches')
+    qa_log_ids = fields.One2many('law.case.qa.log', 'case_id', string='Q&A History')
+    party_ids = fields.One2many('law.case.party', 'case_id', string='Case Parties')
+    hearing_ids = fields.One2many('law.case.hearing', 'case_id', string='Hearings')
+    practice_area_id = fields.Many2one('law.practice.area', string='Practice Area')
+    outcome = fields.Selection([
+        ('open', 'Open'),
+        ('won', 'Won'),
+        ('lost', 'Lost'),
+        ('settled', 'Settled'),
+    ], string='Outcome', default='open', required=True)
+    closure_date = fields.Date(string='Closure Date')
+    matter_type = fields.Char(string='Type of Matter')
+    description = fields.Text(string='Case Description', required=True)
+    playbook_source_ids = fields.Many2many(
+        'law.playbook.source',
+        string='Relevant Playbook Sources',
+        help="Select which reference documents (e.g. Constitution, specific statutes) "
+             "this case should be compared against.",
+        required=True
+    )
+    playbook_match_running = fields.Boolean(string='Playbook Comparison Running', default=False, readonly=True)
+    dms_directory_id = fields.Many2one('dms.directory', string='Document Folder', readonly=True, copy=False)
+    timeline_event_ids = fields.One2many('law.case.timeline.event', 'case_id', string='Timeline Events')
+    is_case_manager = fields.Boolean(compute='_compute_is_case_manager')
+    visible_timeline_event_ids = fields.One2many(
+        'law.case.timeline.event', 'case_id', string='Timeline Events',
+        domain=[('state', '!=', 'rejected')]
+    )
+    draft_timeline_event_count = fields.Integer(compute='_compute_draft_timeline_event_count')
+    draft_timeline_event_label = fields.Char(compute='_compute_draft_timeline_event_count')
+    case_brief_html = fields.Html(string='Case Brief', copy=False)
+    case_brief_generated_at = fields.Datetime(string='Brief Generated On', readonly=True, copy=False)
+    case_brief_generating = fields.Boolean(string='Case Brief Generating', default=False, copy=False)
+    case_brief_stale_count = fields.Integer(compute='_compute_case_brief_stale_count')
+    timeline_extraction_running = fields.Boolean(
+        string='Timeline Extraction Running',
+        compute='_compute_timeline_extraction_running',
+    )
+    qa_last_content_update = fields.Datetime(string='Last Content Update for Q&A', copy=False)
+
+    def _touch_qa_content_version(self):
+        self.write({'qa_last_content_update': fields.Datetime.now()})
+
+    def write(self, vals):
+        result = super().write(vals)
+        if 'playbook_source_ids' in vals:
+            self._touch_qa_content_version()
+        return result
+
+    def _compute_is_case_manager(self):
+        is_manager = self.env.user.has_group('law_case_review.group_law_case_manager')
+        for rec in self:
+            rec.is_case_manager = is_manager
+
+    def action_find_playbook_matches(self):
+        self.ensure_one()
+        self.playbook_match_running = True
+        self.with_delay().action_process_playbook_comparison(self.env.user.id)
+
+    def action_process_playbook_comparison(self, user_id):
+        self.ensure_one()
+        
+        partner = self.env['res.users'].browse(user_id).partner_id
+        try:
+            from ..services.case_playbook_comparison_service import run_case_playbook_comparison
+            run_case_playbook_comparison(self.env, self)
+            self.env['bus.bus']._sendone(partner, 'simple_notification', {
+                'type': 'success',
+                'title': 'Playbook Comparison Complete',
+                'message': f'Playbook matches for {self.name} are ready to view.',
+            })
+        except Exception as e:
+            self.env['ir.logging'].sudo().create({
+                'name': 'law_case_review.law_case',
+                'type': 'server',
+                'level': 'ERROR',
+                'message': f'Playbook comparison failed for case {self.id}: {e}',
+                'path': 'law_case_review.law_case',
+                'func': 'action_process_playbook_comparison',
+                'line': '0',
+            })
+            self.env['bus.bus']._sendone(partner, 'simple_notification', {
+                'type': 'danger',
+                'title': 'Playbook Comparison Failed',
+                'message': 'Something went wrong while comparing this case against the playbook. Please try again or contact support.',
+            })
+        finally:
+            self.playbook_match_running = False
+            self.env.cr.commit()
+
+    def action_ask_case_question(self, question):
+        self.ensure_one()
+        from ..services.case_qa_service import CaseQAService
+        return CaseQAService.ask(self.env, self.id, question)
+
+    def action_clear_case_qa(self):
+        self.ensure_one()
+        self.qa_log_ids.write({'hidden_from_chat': True})
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('name', 'New') == 'New':
+                vals['name'] = self.env['ir.sequence'].next_by_code('law.case') or 'New'
+        records = super().create(vals_list)
+        storage = self.env.ref('law_case_review.storage_law_cases', raise_if_not_found=False)
+        access_group = self.env.ref('law_case_review.dms_access_group_law_cases', raise_if_not_found=False)
+        for case in records:
+            if storage:
+                directory = self.env['dms.directory'].create({
+                    'name': case.name.replace('/', '-'),
+                    'storage_id': storage.id,
+                    'is_root_directory': True,
+                    'group_ids': [(4, access_group.id)] if access_group else False,
+                })
+                case.dms_directory_id = directory.id
+        return records
+
+    def action_open_dms_directory(self):
+        self.ensure_one()
+        if not self.dms_directory_id:
+            raise UserError(_("No document folder linked to this case yet."))
+        action = self.env["ir.actions.act_window"]._for_xml_id("dms.action_dms_file")
+        action['context'] = dict(
+            self.env.context,
+            default_directory_id=self.dms_directory_id.id,
+            searchpanel_default_directory_id=self.dms_directory_id.id,
+        )
+        return action
+
+    def action_extract_timeline_all(self):
+        self.ensure_one()
+        docs_to_process = self.document_ids.filtered(lambda d: not d.timeline_extracted and d.ocr_text)
+        if not docs_to_process:
+            raise UserError('No unprocessed documents with extracted text found.')
+        docs_to_process.action_extract_timeline_async()
+
+    def _compute_draft_timeline_event_count(self):
+        for rec in self:
+            count = len(rec.timeline_event_ids.filtered(lambda e: e.state == 'draft'))
+            rec.draft_timeline_event_label = f'{count} draft(s) awaiting review' if count else False
+
+    def action_generate_case_brief(self):
+        self.ensure_one()
+        self.case_brief_generating = True
+        self.with_delay(description='Generate case brief for %s' % self.name).action_generate_case_brief_job()
+
+    def action_generate_case_brief_job(self):
+        self.ensure_one()
+        try:
+            from ..services.case_brief_service import generate_case_brief
+            brief_html = generate_case_brief(self.env, self)
+            self.write({
+                'case_brief_html': brief_html,
+                'case_brief_generated_at': fields.Datetime.now(),
+            })
+        finally:
+            self.case_brief_generating = False
+
+    def _compute_case_brief_stale_count(self):
+        for rec in self:
+            if not rec.case_brief_generated_at:
+                rec.case_brief_stale_count = 0
+                continue
+            rec.case_brief_stale_count = len(rec.document_ids.filtered(
+                lambda d: d.write_date and d.write_date > rec.case_brief_generated_at
+            ))
+
+    def _compute_timeline_extraction_running(self):
+        for rec in self:
+            rec.timeline_extraction_running = any(rec.document_ids.mapped('timeline_extraction_queued'))
+
+=== ./models/law_playbook_source.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+from .playbook_ingestion_service import split_and_dispatch_chunks, process_single_chunk
+
+class LawPlaybookSource(models.Model):
+    _name = 'law.playbook.source'
+    _description = 'Law Playbook Source Document'
+
+
+    name = fields.Char(string='Title', required=True)
+
+    source_type = fields.Selection([
+        ('constitution', 'Constitution'),
+        ('statute', 'Statute / Act'),
+        ('regulation', 'Regulation'),
+        ('other', 'Other'),
+    ], string='Source Type', default='other')
+
+    file = fields.Binary(string='File', attachment=True)
+
+    file_name = fields.Char(string='File Name')
+
+    ocr_text = fields.Text(string='Extracted Text')
+
+    state = fields.Selection([
+        ('uploaded', 'Uploaded'),
+        ('processing', 'Processing'),
+        ('done', 'Done'),
+        ('error', 'Error'),
+    ], string='Status', default='uploaded')
+
+    clause_ids = fields.One2many('law.playbook.clause', 'source_id', string='Clauses')
+
+    clause_count = fields.Integer(string='Clause Count', compute='_compute_clause_count')
+
+    chunk_count = fields.Integer(string='Total Chunks', default=0, readonly=True)
+    
+    chunk_done_count = fields.Integer(string='Chunks Completed', default=0, readonly=True)
+
+    def _compute_clause_count(self):
+        for record in self:
+            record.clause_count = len(record.clause_ids)
+
+    def action_view_clauses(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Clauses',
+            'res_model': 'law.playbook.clause',
+            'view_mode': 'list,form',
+            'domain': [('source_id', '=', self.id)],
+        }
+
+    def action_process(self):
+        self.ensure_one()
+        if not self.file:
+            from odoo.exceptions import UserError
+            raise UserError("Please upload a file before processing.")
+        self.with_delay(description="Process playbook source: %s" % self.name).button_process_job()
+
+    def button_process_job(self):
+        self.ensure_one()
+        split_and_dispatch_chunks(self.env, self)
+
+    def button_process_chunk_job(self, chunk_index, chunk_text):
+        self.ensure_one()
+        process_single_chunk(self.env, self, chunk_index, chunk_text)
+
+=== ./models/law_case_document.py ===
+# -*- coding: utf-8 -*-
+import base64
+import requests
+import json
+from odoo.exceptions import UserError
+from ..services import ai_provider_service
+from odoo import models, fields, api, _
+
+
+class LawCaseDocument(models.Model):
+    _name = 'law.case.document'
+    _description = 'Law Case Document'
+
+    name = fields.Char(string='Document Name', required=True)
+    case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade', readonly=True)
+    document_type = fields.Selection([
+        ('filing', 'Filing'),
+        ('evidence', 'Evidence'),
+        ('correspondence', 'Correspondence'),
+        ('court_order', 'Court Order'),
+        ('other', 'Other'),
+    ], string='Document Type', default='other')
+    file = fields.Binary(string='File', attachment=True)
+    file_name = fields.Char(string='File Name')
+    state = fields.Selection([
+        ('uploaded', 'Uploaded'),
+        ('extracting', 'Extracting'),
+        ('pending_review', 'Pending Review'),
+        ('confirmed', 'Confirmed'),
+        ('error', 'Error'),
+    ], string='Status', default='uploaded')
+    ocr_text = fields.Text(string='Extracted Text')
+    extracted_case_number = fields.Char(string='Case Number')
+    extracted_client_name = fields.Char(string='Client Name')
+    extracted_filing_date = fields.Char(string='Filing Date')
+    timeline_extracted = fields.Boolean(string='Timeline Extracted', default=False, copy=False)
+    timeline_extraction_queued = fields.Boolean(string='Timeline Extraction Queued', default=False, copy=False)
+    text_extraction_queued = fields.Boolean(string='Text Extraction Queued', default=False, copy=False)
+
+    def write(self, vals):
+        result = super().write(vals)
+        if vals.get('state') == 'confirmed':
+            from .case_document_ingestion_service import chunk_and_embed_document
+            for doc in self:
+                chunk_and_embed_document(self.env, doc)
+                doc.case_id._touch_qa_content_version()
+        return result
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        for doc in records:
+            if doc.file and doc.case_id.dms_directory_id:
+                self.env['dms.file'].create({
+                    'name': (doc.file_name or doc.name).replace('/', '-'),
+                    'directory_id': doc.case_id.dms_directory_id.id,
+                    'content': doc.file,
+                })
+        return records
+
+    def action_extract_text_async(self):
+        for doc in self:
+            if not doc.file:
+                raise UserError('Please upload a file first.')
+            doc.text_extraction_queued = True
+            doc.with_delay(description='Extract text for %s' % doc.name).action_extract_text_job()
+
+    def action_extract_text_job(self):
+        self.ensure_one()
+        try:
+            self.action_extract_text()
+        finally:
+            self.text_extraction_queued = False
+
+    def action_extract_text(self):
+        self.ensure_one()
+        if not self.file:
+            raise UserError('Please upload a file first.')
+
+        try:
+            file_content = base64.b64decode(self.file)
+            response = requests.post(
+                'http://localhost:8500/extract-text',
+                files={'file': (self.file_name, file_content)},
+                timeout=60,
+            )
+            if response.status_code != 200:
+                self.state = 'error'
+                raise UserError('OCR extraction failed.')
+
+            ocr_text = response.json().get('text')
+            prompt = (
+                "Read this document text and extract the following fields as JSON only, "
+                "with no extra explanation, no markdown, just raw JSON:\n"
+                "{\"case_number\": \"\", \"client_name\": \"\", \"filing_date\": \"\"}\n\n"
+                "Document text:\n" + ocr_text
+            )
+            answer = ai_provider_service.call_llm(self.env, prompt)
+            extracted_data = json.loads(answer)
+            self.write({
+                'ocr_text': ocr_text,
+                'extracted_case_number': extracted_data.get('case_number'),
+                'extracted_client_name': extracted_data.get('client_name'),
+                'extracted_filing_date': extracted_data.get('filing_date'),
+                'state': 'confirmed',
+            })
+        except UserError:
+            raise
+        except Exception:
+            self.state = 'error'
+            raise UserError('Extraction failed unexpectedly.')
+
+    def action_save_new(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'law.case.document',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_case_id': self.case_id.id},
+        }
+
+    def action_extract_timeline(self):
+        from ..services import timeline_extraction_service
+        for doc in self:
+            if not doc.case_id:
+                continue
+            events = timeline_extraction_service.extract_timeline_events(self.env, doc)
+            for event in events:
+                event['case_id'] = doc.case_id.id
+                event['document_id'] = doc.id
+                event['state'] = 'draft'
+            if events:
+                self.env['law.case.timeline.event'].create(events)
+            doc.timeline_extracted = True
+
+    def action_extract_timeline_async(self):
+        for doc in self:
+            doc.timeline_extraction_queued = True
+            doc.with_delay(description='Extract timeline events for %s' % doc.name).action_extract_timeline_job()
+
+    def action_extract_timeline_job(self):
+        try:
+            self.action_extract_timeline()
+        finally:
+            self.timeline_extraction_queued = False
+
+=== ./models/case_party.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawCaseParty(models.Model):
+    _name = 'law.case.party'
+    _description = 'Law Case Party'
+
+    case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade')
+    name = fields.Char(string='Name', required=True)
+    role = fields.Selection([
+        ('plaintiff', 'Plaintiff'),
+        ('defendant', 'Defendant'),
+        ('petitioner', 'Petitioner'),
+        ('respondent', 'Respondent'),
+        ('witness', 'Witness'),
+        ('opposing_counsel', 'Opposing Counsel'),
+        ('other', 'Other'),
+    ], string='Role', required=True)
+    contact_phone = fields.Char(string='Phone')
+    contact_email = fields.Char(string='Email')
+    notes = fields.Text(string='Notes')
+
+=== ./models/practice_area.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawPracticeArea(models.Model):
+    _name = 'law.practice.area'
+    _description = 'Law Practice Area'
+    _order = 'name'
+
+    name = fields.Char(string='Practice Area', required=True)
+    active = fields.Boolean(default=True)
+
+=== ./models/__init__.py ===
+# -*- coding: utf-8 -*-
+
+from . import law_case
+from . import law_case_document
+from . import res_config_settings
+from . import law_ai_model_option
+from . import law_playbook_source
+from . import law_playbook_clause
+from . import playbook_ingestion_service
+from . import law_client_request
+from . import law_embedding_model_option
+from . import law_ai_cache
+from . import law_case_playbook_match
+from . import case_document_ingestion_service
+from . import case_document_chunk
+from . import case_qa_log
+from . import case_party
+from . import case_hearing
+from . import practice_area
+from . import reembed_service
+from . import law_case_timeline_event
+
+=== ./models/law_case_playbook_match.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+
+
+class LawCasePlaybookMatch(models.Model):
+    _name = 'law.case.playbook.match'
+    _description = 'Law Case Playbook Comparison Result'
+    _order = 'match_type_sequence asc, score desc'
+
+    case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade')
+    clause_id = fields.Many2one('law.playbook.clause', string='Matched Clause', required=True, ondelete='cascade')
+    match_type = fields.Selection([
+        ('violation', 'Potential Violation'),
+        ('defense', 'Supports Defense'),
+        ('related', 'Related / Contextual'),
+    ], string='Match Type', required=True)
+    explanation = fields.Text(string='AI Explanation')
+    score = fields.Float(string='Similarity Score')
+    confidence = fields.Selection([
+        ('strong', 'Strong Match'),
+        ('possible', 'Possible Match'),
+    ], string='Confidence')
+    match_type_sequence = fields.Integer(
+        string='Match Type Priority',
+        compute='_compute_match_type_sequence',
+        store=True,
+    )
+
+    clause_number = fields.Char(related='clause_id.clause_number', string='Clause Number', readonly=True)
+    clause_title = fields.Char(related='clause_id.title', string='Clause Title', readonly=True)
+
+    _MATCH_TYPE_PRIORITY = {
+        'violation': 1,
+        'defense': 2,
+        'related': 3,
+    }
+
+    @api.depends('match_type')
+    def _compute_match_type_sequence(self):
+        for record in self:
+            record.match_type_sequence = self._MATCH_TYPE_PRIORITY.get(record.match_type, 99)
+
+=== ./models/case_document_ingestion_service.py ===
+# -*- coding: utf-8 -*-
+import json
+from ..services.embedding_service import EmbeddingService
+
+
+def split_into_chunks(text, chunk_size=4000, overlap=500):
+    chunks = []
+    start = 0
+    text_length = len(text)
+    while start < text_length:
+        end = start + chunk_size
+        chunk = text[start:end]
+        chunks.append(chunk)
+        start = end - overlap
+    return chunks
+
+
+def chunk_and_embed_document(env, document):
+    if not document.ocr_text:
+        return
+
+    env['law.case.document.chunk'].search([('document_id', '=', document.id)]).unlink()
+
+    chunks = split_into_chunks(document.ocr_text)
+    model_option = EmbeddingService.get_active_model(env)
+    active_model = model_option.model_string
+    for i, chunk_text in enumerate(chunks):
+        try:
+            embedding_vector = EmbeddingService.embed(env, chunk_text)
+        except Exception as e:
+            env['ir.logging'].sudo().create({
+                'name': 'law_case_review',
+                'type': 'server',
+                'level': 'ERROR',
+                'message': 'Embedding failed for chunk %d of document %d: %s' % (i, document.id, str(e)),
+                'path': 'law_case_review.case_document_ingestion',
+                'func': 'chunk_and_embed_document',
+                'line': '0',
+            })
+            continue
+        new_chunk = env['law.case.document.chunk'].create({
+            'document_id': document.id,
+            'chunk_text': chunk_text,
+            'chunk_index': i,
+            'embedding_model': active_model,
+        })
+        EmbeddingService.sync_embedding_vector(env, 'law_case_document_chunk', new_chunk.id, embedding_vector, model_option.dimension)
+    env.cr.commit()
+
+=== ./models/law_playbook_clause.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawPlaybookClause(models.Model):
+    _name = 'law.playbook.clause'
+    _description = 'Law Playbook Clause'
+
+    source_id = fields.Many2one('law.playbook.source', string='Source', required=True, ondelete='cascade')
+    clause_number = fields.Char(string='Clause Number', required=True)
+    title = fields.Char(string='Title')
+    text = fields.Text(string='Full Text', required=True)
+
+    
+    embedding_model = fields.Char(string='Embedding Model Used')
+
+=== ./models/law_client_request.py ===
+# -*- coding: utf-8 -*-
+
+from odoo import api, models, fields
+import requests
+import base64
+import json
+from ..services import ai_provider_service
+
+class LawClientRequest(models.Model):
+    _name = 'law.client.request'
+    _description = 'Client Request'
+
+    name = fields.Char(string='Name')
+    email = fields.Char(string='Email')
+    phone = fields.Char(string='Phone Number')
+    mobile = fields.Char(string='Mobile Number')
+
+    street = fields.Char(string='Street')
+    street2 = fields.Char(string='Street 2')
+    city = fields.Char(string='City')
+    state_id = fields.Many2one('res.country.state', string='State')
+    zip = fields.Char(string='ZIP')
+    country_id = fields.Many2one('res.country', string='Country')
+    company_id=fields.Many2one('res.company', string='Company', default = lambda self: self.env.company)
+    partner_id = fields.Many2one('res.partner', string='Client', readonly=True, copy=False)
+    lawyer_id = fields.Many2one('res.users', string='Assigned Lawyer', default=lambda self: self.env.user)
+    case_id = fields.Many2one('law.case', string='Case', readonly=True, copy=False)
+    matter_type = fields.Char(string='Type of Matter')
+    description = fields.Text(string='Description of Matter')
+    state = fields.Selection([
+        ('request', 'Request For Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ], string='Status', default='request')
+    file = fields.Binary(string="Document", attachment=True)
+    file_name=fields.Char(string="File Name")
+    ocr_text = fields.Text(string='OCR Text')
+    processing_state = fields.Selection([
+        ('pending', 'Processing'),
+        ('done', 'Done'),
+    ], default='pending', readonly=True)
+    is_case_manager = fields.Boolean(compute='_compute_is_case_manager')
+
+    def _compute_is_case_manager(self):
+        is_manager = self.env.user.has_group('law_case_review.group_law_case_manager')
+        for rec in self:
+            rec.is_case_manager = is_manager
+
+    def action_approve(self):
+        for rec in self:
+            partner = False
+            if rec.email:
+                partner = self.env['res.partner'].search([('email', '=', rec.email)], limit=1)
+            if not partner:
+                partner = self.env['res.partner'].create({
+                    'name': rec.name,
+                    'email': rec.email,
+                    'phone': rec.phone or rec.mobile,
+                    'street': rec.street,
+                    'street2': rec.street2,
+                    'city': rec.city,
+                    'state_id': rec.state_id.id,
+                    'zip': rec.zip,
+                    'country_id': rec.country_id.id,
+                })
+            rec.partner_id = partner
+            case = self.env['law.case'].create({
+                'client_id': partner.id,
+                'description': rec.description,
+                'matter_type': rec.matter_type,
+            })
+            rec.case_id = case
+            rec.state = "approved"
+
+    def action_reject(self):
+        self.state = "rejected"
+
+    def button_process_extraction_job(self):
+        self.ensure_one()
+        try:
+            file_bytes = base64.b64decode(self.file)
+            response = requests.post(
+                "http://localhost:8500/extract-text",
+                files={'file': (self.file_name, file_bytes)},
+                timeout=300,
+            )
+            ocr_text = response.json().get('text', '')
+
+            prompt = f"""
+            Read the following document text and extract these fields as raw JSON only,
+            no markdown, no explanation:
+            {{
+              "name": "...",
+              "email": "...",
+              "phone": "...",
+              "mobile": "...",
+              "street": "...",
+              "street2": "...",
+              "city": "...",
+              "zip": "...",
+              "matter_type": "...",
+              "description": "..."
+            }}
+            If a field is not found in the text, leave it as an empty string.
+            Document text:
+            {ocr_text}
+            """
+            ai_response = ai_provider_service.call_llm(self.env, prompt)
+            data = json.loads(ai_response)
+
+            self.write({
+                'name': data.get('name', ''),
+                'email': data.get('email', ''),
+                'phone': data.get('phone', ''),
+                'mobile': data.get('mobile', ''),
+                'street': data.get('street', ''),
+                'street2': data.get('street2', ''),
+                'city': data.get('city', ''),
+                'zip': data.get('zip', ''),
+                'matter_type': data.get('matter_type', ''),
+                'description': data.get('description', ''),
+                'ocr_text': ocr_text,
+                'processing_state': 'done',
+            })
+        except Exception as e:
+            self.env['ir.logging'].sudo().create({
+                'name': 'law_case_review',
+                'type': 'server',
+                'level': 'ERROR',
+                'message': 'Client request extraction failed for file %s: %s' % (self.file_name, str(e)),
+                'path': 'law_case_review.law_client_request',
+                'func': 'button_process_extraction_job',
+                'line': '0',
+            })
+            self.unlink()
+
+=== ./models/law_ai_model_option.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawAIModelOption(models.Model):
+    _name = 'law.ai.model.option'
+    _description = 'Available AI Model Option for Law Case Review'
+    _order = 'provider, name'
+
+    name = fields.Char(string='Display Name', required=True)
+    provider = fields.Selection([
+        ('openai', 'OpenAI'),
+        ('gemini', 'Gemini'),
+        ('anthropic', 'Anthropic'),
+        ('openrouter', 'OpenRouter'),
+        ('groq', 'Groq'),
+    ], string='Provider', required=True)
+    model_string = fields.Char(string='Model String', required=True)
+    active = fields.Boolean(string='Active', default=True)
+
+=== ./models/res_config_settings.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+from odoo.exceptions import ValidationError
+
+
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    law_ai_provider = fields.Selection([
+        ('openai', 'OpenAI'),
+        ('gemini', 'Gemini'),
+        ('anthropic', 'Anthropic'),
+        ('openrouter', 'OpenRouter'),
+        ('groq', 'Groq'),
+    ], string='AI Provider', config_parameter='law_case_review.ai_provider', default='openai')
+
+    law_ai_model_id = fields.Many2one(
+        'law.ai.model.option',
+        string='AI Model',
+        config_parameter='law_case_review.ai_model_id',
+        domain="[('provider', '=', law_ai_provider), ('active', '=', True)]",
+    )
+
+    law_ai_api_key = fields.Char(string='API Key', config_parameter='law_case_review.ai_api_key')
+
+    law_embedding_provider = fields.Selection([
+        ('mistral', 'Mistral'),
+        ('google', 'Google'),
+    ], string='Embedding Provider', config_parameter='law_case_review.embedding_provider', default='mistral')
+
+    law_embedding_model_id = fields.Many2one(
+        'law.embedding.model.option',
+        string='Embedding Model',
+        config_parameter='law_case_review.embedding_model_id',
+        domain="[('provider', '=', law_embedding_provider), ('active', '=', True)]",
+    )
+
+    law_mistral_api_key = fields.Char(string='Mistral API Key', config_parameter='law_case_review.mistral_api_key')
+
+    law_google_api_key = fields.Char(string='Google API Key', config_parameter='law_case_review.google_api_key')
+
+    def execute(self):
+
+        if self.law_embedding_provider and not self.law_embedding_model_id:
+            raise ValidationError(
+                "Please select an Embedding Model for the chosen Provider (%s) before saving."
+                % dict(self._fields['law_embedding_provider'].selection).get(self.law_embedding_provider)
+            )
+        if self.law_embedding_model_id and self.law_embedding_model_id.provider != self.law_embedding_provider:
+            raise ValidationError(
+                "The selected Embedding Model (%s) does not belong to the selected Provider (%s). "
+                "Please re-select a matching model."
+                % (self.law_embedding_model_id.name, dict(self._fields['law_embedding_provider'].selection).get(self.law_embedding_provider))
+            )
+
+        if self.law_ai_provider and not self.law_ai_model_id:
+            raise ValidationError(
+                "Please select an AI Model for the chosen Provider (%s) before saving."
+                % dict(self._fields['law_ai_provider'].selection).get(self.law_ai_provider)
+            )
+        if self.law_ai_model_id and self.law_ai_model_id.provider != self.law_ai_provider:
+            raise ValidationError(
+                "The selected AI Model (%s) does not belong to the selected Provider (%s). "
+                "Please re-select a matching model."
+                % (self.law_ai_model_id.name, dict(self._fields['law_ai_provider'].selection).get(self.law_ai_provider))
+            )
+        
+        ICP = self.env['ir.config_parameter'].sudo()
+        old_embedding_model_id = ICP.get_param('law_case_review.embedding_model_id')
+
+        result = super().execute()
+
+        new_embedding_model_id = str(self.law_embedding_model_id.id) if self.law_embedding_model_id else False
+
+        if old_embedding_model_id and new_embedding_model_id and old_embedding_model_id != new_embedding_model_id:
+            ICP.set_param('law_case_review.embedding_model_id', old_embedding_model_id)
+
+            wizard = self.env['law.embedding.model.change.wizard'].create({
+                'old_model_id': int(old_embedding_model_id),
+                'new_model_id': int(new_embedding_model_id),
+            })
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'law.embedding.model.change.wizard',
+                'res_id': wizard.id,
+                'view_mode': 'form',
+                'target': 'new',
+            }
+
+        return result
+
+    @api.onchange('law_embedding_provider')
+    def _onchange_law_embedding_provider(self):
+        if self.law_embedding_model_id and self.law_embedding_model_id.provider != self.law_embedding_provider:
+            self.law_embedding_model_id = False
+
+    @api.onchange('law_ai_provider')
+    def _onchange_law_ai_provider(self):
+        if self.law_ai_model_id and self.law_ai_model_id.provider != self.law_ai_provider:
+            self.law_ai_model_id = False
+
+=== ./models/case_qa_log.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawCaseQALog(models.Model):
+    _name = 'law.case.qa.log'
+    _description = 'Law Case Question Answer Log'
+    _order = 'create_date desc'
+
+    case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade')
+    user_id = fields.Many2one('res.users', string='Asked By', default=lambda self: self.env.user, readonly=True)
+    question = fields.Text(string='Question', required=True)
+    answer = fields.Text(string='Answer')
+    source_write_date = fields.Datetime(string='Case Snapshot Date')
+    cited_chunk_ids = fields.Many2many('law.case.document.chunk', string='Cited Document Sections')
+    cited_clause_ids = fields.Many2many('law.playbook.clause', string='Cited Playbook Clauses')
+    hidden_from_chat = fields.Boolean(string='Cleared From Chat', default=False)
+
+=== ./models/case_hearing.py ===
+# -*- coding: utf-8 -*-
+from odoo import models, fields
+
+
+class LawCaseHearing(models.Model):
+    _name = 'law.case.hearing'
+    _description = 'Law Case Hearing'
+    _order = 'hearing_date asc'
+
+    case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade')
+    hearing_date = fields.Date(string='Hearing Date', required=True)
+    court = fields.Char(string='Court')
+    judge = fields.Char(string='Judge')
+    notes = fields.Text(string='Notes / Outcome')
+
+=== ./models/reembed_service.py ===
+# -*- coding: utf-8 -*-
+from .. services.embedding_service import EmbeddingService
+
+
+def _find_missing_ids(env, model_name, dimension, model_string, limit=None):
+    table = 'law_playbook_clause' if model_name == 'law.playbook.clause' else 'law_case_document_chunk'
+    column = f"embedding_vector_{dimension}"
+    query = f"SELECT id FROM {table} WHERE {column} IS NULL OR embedding_model != %s"
+    params = [model_string]
+    if limit:
+        query += " LIMIT %s"
+        params.append(limit)
+    env.cr.execute(query, params)
+    return [row[0] for row in env.cr.fetchall()]
+
+
+def count_missing_for_model(env, new_model):
+    dimension = new_model.dimension
+    clause_ids = _find_missing_ids(env, 'law.playbook.clause', dimension, new_model.model_string)
+    chunk_ids = _find_missing_ids(env, 'law.case.document.chunk', dimension, new_model.model_string)
+    return len(clause_ids) + len(chunk_ids)
+
+
+def _reembed_clause(env, clause, new_model, dimension):
+    embedding_input = f"Article {clause.clause_number}: {clause.title or ''}. {clause.title or ''}. {(clause.text or '')[:200]}"
+    embedding_vector = EmbeddingService.embed(env, embedding_input)
+    clause.write({'embedding_model': new_model.model_string})
+    EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', clause.id, embedding_vector, dimension)
+
+
+def _reembed_chunk(env, chunk, new_model, dimension):
+    embedding_vector = EmbeddingService.embed(env, chunk.chunk_text)
+    chunk.write({'embedding_model': new_model.model_string})
+    EmbeddingService.sync_embedding_vector(env, 'law_case_document_chunk', chunk.id, embedding_vector, dimension)
+
+
+def process_batch_for_model(env, new_model, batch_size=5):
+    """
+    Processes up to batch_size records still needing re-embedding for
+    new_model, mixing clauses and chunks in one pass. Returns counts for
+    this batch only - caller (the wizard) accumulates totals across calls.
+    """
+    dimension = new_model.dimension
+    processed = 0
+    errors = 0
+
+    clause_ids = _find_missing_ids(env, 'law.playbook.clause', dimension, new_model.model_string, limit=batch_size)
+    for clause in env['law.playbook.clause'].browse(clause_ids):
+        try:
+            with env.cr.savepoint():
+                _reembed_clause(env, clause, new_model, dimension)
+            processed += 1
+        except Exception as e:
+            errors += 1
+            env['ir.logging'].sudo().create({
+                'name': 'law_case_review',
+                'type': 'server',
+                'level': 'ERROR',
+                'message': 'Re-embed failed for clause %d: %s' % (clause.id, str(e)),
+                'path': 'law_case_review.reembed_service',
+                'func': 'process_batch_for_model',
+                'line': '0',
+            })
+        env.cr.commit()
+
+    remaining_slots = batch_size - processed - errors
+    if remaining_slots > 0:
+        chunk_ids = _find_missing_ids(env, 'law.case.document.chunk', dimension, new_model.model_string, limit=remaining_slots)
+        for chunk in env['law.case.document.chunk'].browse(chunk_ids):
+            try:
+                with env.cr.savepoint():
+                    _reembed_chunk(env, chunk, new_model, dimension)
+                processed += 1
+            except Exception as e:
+                errors += 1
+                env['ir.logging'].sudo().create({
+                    'name': 'law_case_review',
+                    'type': 'server',
+                    'level': 'ERROR',
+                    'message': 'Re-embed failed for chunk %d: %s' % (chunk.id, str(e)),
+                    'path': 'law_case_review.reembed_service',
+                    'func': 'process_batch_for_model',
+                    'line': '0',
+                })
+            env.cr.commit()
+
+    return processed, errors
+
+=== ./services/case_qa_service.py ===
+# -*- coding: utf-8 -*-
+import json
+import re
+from . import ai_provider_service
+from .semantic_search_service import SemanticSearchService
+
+
+class CaseQAService:
+
+    FALLBACK_ANSWER = "The case documents and selected playbook sources do not contain information to answer this question."
+
+    @staticmethod
+    def _build_prompt(question, results):
+        chunks = [r for r in results if r['type'] == 'chunk']
+        clauses = [r for r in results if r['type'] == 'clause']
+
+        parts = [
+            "You are a legal assistant helping a lawyer with a specific case.",
+            "Answer ONLY using the information given below. Do not use outside knowledge.",
+            "Always respond in English, regardless of the language of the source text.",
+            "If the information given does not answer the question, respond with exactly: \"" + CaseQAService.FALLBACK_ANSWER + "\"",
+            "Cite the sources you used, using the exact labels shown between the --- markers.",
+            "",
+            "Respond ONLY as JSON, no markdown, no explanation outside the JSON:",
+            "{\"answer\": \"<plain english answer>\", \"cited_labels\": [\"<label1>\", \"<label2>\"]}",
+            "",
+            "Question: " + question,
+            "",
+            "Case Document Excerpts:",
+        ]
+
+        if chunks:
+            for r in chunks:
+                chunk = r['chunk']
+                label = f"{chunk.document_id.name} :: chunk {chunk.chunk_index}"
+                parts.append(f"--- {label} ---")
+                parts.append(chunk.chunk_text)
+                parts.append("")
+        else:
+            parts.append("(none found)")
+            parts.append("")
+
+        parts.append("Playbook Clauses:")
+        if clauses:
+            for r in clauses:
+                clause = r['clause']
+                label = f"Article {clause.clause_number} :: {clause.title}"
+                parts.append(f"--- {label} ---")
+                parts.append(clause.text or '')
+                parts.append("")
+        else:
+            parts.append("(none found)")
+            parts.append("")
+
+        return "\n".join(parts)
+
+    @staticmethod
+    def ask(env, case_id, question, top_k=8):
+        case = env['law.case'].browse(case_id)
+        case.ensure_one()
+
+        cached = env['law.case.qa.log'].search([
+            ('case_id', '=', case_id),
+            ('question', '=', question),
+            ('source_write_date', '=', case.qa_last_content_update),
+        ], limit=1)
+        if cached:
+            return {
+                'answer': cached.answer,
+                'cited_chunks': cached.cited_chunk_ids,
+                'cited_clauses': cached.cited_clause_ids,
+                'from_cache': True,
+            }
+
+        source_ids = case.playbook_source_ids.ids
+        results = SemanticSearchService.search_case_context(
+            env, question, case_id=case_id, source_ids=source_ids, top_k=top_k
+        )
+
+        if not results:
+            answer_text = CaseQAService.FALLBACK_ANSWER
+            cited_chunks = env['law.case.document.chunk']
+            cited_clauses = env['law.playbook.clause']
+        else:
+            prompt = CaseQAService._build_prompt(question, results)
+            from odoo.exceptions import UserError
+            try:
+                answer = ai_provider_service.call_llm(env, prompt)
+            except Exception as e:
+                raise UserError(str(e))
+            cleaned = re.sub(r'^```json\s*|\s*```$', '', answer.strip())
+
+            try:
+                parsed = json.loads(cleaned)
+                answer_text = parsed.get('answer', CaseQAService.FALLBACK_ANSWER)
+                cited_labels = parsed.get('cited_labels', [])
+            except (json.JSONDecodeError, ValueError):
+                answer_text = CaseQAService.FALLBACK_ANSWER
+                cited_labels = []
+
+            if answer_text.strip() == CaseQAService.FALLBACK_ANSWER:
+                cited_labels = []
+
+            candidate_chunks = [r['chunk'] for r in results if r['type'] == 'chunk']
+            candidate_clauses = [r['clause'] for r in results if r['type'] == 'clause']
+
+            cited_chunks = env['law.case.document.chunk'].browse([
+                c.id for c in candidate_chunks
+                if f"{c.document_id.name} :: chunk {c.chunk_index}" in cited_labels
+            ])
+            cited_clauses = env['law.playbook.clause'].browse([
+                c.id for c in candidate_clauses
+                if f"Article {c.clause_number} :: {c.title}" in cited_labels
+            ])
+
+        env['law.case.qa.log'].create({
+            'case_id': case_id,
+            'question': question,
+            'answer': answer_text,
+            'source_write_date': case.qa_last_content_update,
+            'cited_chunk_ids': [(6, 0, cited_chunks.ids)],
+            'cited_clause_ids': [(6, 0, cited_clauses.ids)],
+            'hidden_from_chat': False,
+        })
+
+        return {
+            'answer': answer_text,
+            'cited_chunks': cited_chunks,
+            'cited_clauses': cited_clauses,
+            'from_cache': False,
+        }
+
+=== ./services/playbook_retrieval_service.py ===
+# -*- coding: utf-8 -*-
+from .semantic_search_service import SemanticSearchService
+
+
+def find_matching_playbook_clauses(env, query_text, source_type=None, source_ids=None, top_k=5):
+    if not query_text or not query_text.strip():
+        return []
+
+    results = SemanticSearchService.search(
+        env,
+        query_text=query_text,
+        source_type=source_type,
+        source_ids=source_ids,
+        top_k=top_k,
+    )
+    return results
+
+=== ./services/case_brief_service.py ===
+# -*- coding: utf-8 -*-
+import re
+import markdown
+from . import ai_provider_service
+
+def generate_case_brief(env, case):
+    documents_text = ""
+    for doc in case.document_ids:
+        if doc.ocr_text:
+            documents_text += f"\n\n--- Document: {doc.name} ({doc.document_type}) ---\n{doc.ocr_text}"
+
+    if not documents_text:
+        return "<p><em>No extracted document text available yet. Run Extract Text on the case documents first.</em></p>"
+
+    prompt = f"""
+You are preparing a case handoff brief for a lawyer who is new to this case.
+Read all the source material below and write a structured brief.
+
+CRITICAL FORMATTING RULES:
+- Output ONLY raw HTML tags. Never use markdown syntax.
+- Never use ** for bold - use <strong> tags instead.
+- Never use * or - for bullet points - use <ul><li> tags instead.
+- Never wrap your output in ```html code fences or any code fences at all.
+- Do not include any text before the first <h3> tag or after the last closing tag.
+
+Include exactly these four sections, in this order, each with an <h3> header:
+<h3>Background</h3>, <h3>Key Incidents</h3>, <h3>Chronology</h3>, <h3>Current Status</h3>
+Use <p> for paragraphs and <ul><li> for the chronology list.
+
+Only use facts present in the material below. Do not invent details.
+
+Case description: {case.description or ''}
+Matter type: {case.matter_type or ''}
+Outcome: {case.outcome}
+
+Source documents:
+{documents_text}
+"""
+    result = ai_provider_service.call_llm(env, prompt)
+    result = re.sub(r'^```html\s*|^```\s*|```\s*$', '', result.strip())
+    return markdown.markdown(result)
+
+=== ./services/ai_provider_service.py ===
+# -*- coding: utf-8 -*-
+import requests
+import json
+
+import time
+
+TIMEOUT = 60
+MAX_RETRIES = 3
+RETRY_DELAY = 5  # seconds between retries
+
+def call_llm(env, prompt):
+    provider = env['ir.config_parameter'].sudo().get_param('law_case_review.ai_provider')
+    model_option_id = env['ir.config_parameter'].sudo().get_param('law_case_review.ai_model_id')
+    api_key = env['ir.config_parameter'].sudo().get_param('law_case_review.ai_api_key')
+    if not provider or not model_option_id or not api_key:
+        raise Exception('AI provider, model, or API key not configured in Settings.')
+    model_option = env['law.ai.model.option'].sudo().browse(int(model_option_id))
+    model = model_option.model_string
+
+    last_error = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        try:
+            if provider == 'openai':
+                return _call_openai(model, api_key, prompt)
+            elif provider == 'anthropic':
+                return _call_anthropic(model, api_key, prompt)
+            elif provider == 'gemini':
+                return _call_gemini(model, api_key, prompt)
+            elif provider == 'openrouter':
+                return _call_openrouter(model, api_key, prompt)
+            elif provider == 'groq':
+                return _call_groq(model, api_key, prompt)
+            else:
+                raise Exception('Unknown AI provider: %s' % provider)
+        except requests.exceptions.Timeout:
+            last_error = Exception('AI provider (%s) took too long to respond (over %ss). Please try again.' % (provider, TIMEOUT))
+        except requests.exceptions.ConnectionError:
+            last_error = Exception('Could not connect to AI provider (%s). Check your network connection.' % provider)
+        except Exception as e:
+            if 'limit reached' in str(e):
+                raise  # don't retry quota errors, fail immediately
+            last_error = e
+
+        if attempt < MAX_RETRIES:
+            time.sleep(RETRY_DELAY)
+
+    raise last_error
+
+def _call_openai(model, api_key, prompt):
+    response = requests.post(
+        'https://api.openai.com/v1/chat/completions',
+        headers={'Authorization': 'Bearer %s' % api_key},
+        json={
+            'model': model,
+            'messages': [{'role': 'user', 'content': prompt}],
+        },
+        timeout=TIMEOUT,
+    )
+    _check_response(response, 'OpenAI')
+    data = response.json()
+    return data['choices'][0]['message']['content']
+
+def _call_groq(model, api_key, prompt):
+    response = requests.post(
+        'https://api.groq.com/openai/v1/chat/completions',
+        headers={'Authorization': 'Bearer %s' % api_key},
+        json={
+            'model': model,
+            'messages': [{'role': 'user', 'content': prompt}],
+        },
+        timeout=TIMEOUT,
+    )
+    _check_response(response, 'Groq')
+    data = response.json()
+    return data['choices'][0]['message']['content']
+
+def _call_openrouter(model, api_key, prompt):
+    response = requests.post(
+        'https://openrouter.ai/api/v1/chat/completions',
+        headers={'Authorization': 'Bearer %s' % api_key},
+        json={'model': model, 'messages': [{'role': 'user', 'content': prompt}]},
+        timeout=TIMEOUT,
+    )
+    _check_response(response, 'OpenRouter')
+    data = response.json()
+    return data['choices'][0]['message']['content']
+
+def _call_anthropic(model, api_key, prompt):
+    response = requests.post(
+        'https://api.anthropic.com/v1/messages',
+        headers={
+            'x-api-key': api_key,
+            'anthropic-version': '2023-06-01',
+        },
+        json={
+            'model': model,
+            'max_tokens': 1024,
+            'messages': [{'role': 'user', 'content': prompt}],
+        },
+        timeout=TIMEOUT,
+    )
+    _check_response(response, 'Anthropic')
+    data = response.json()
+    return data['content'][0]['text']
+
+def _call_gemini(model, api_key, prompt):
+    url = 'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s' % (model, api_key)
+    response = requests.post(
+        url,
+        json={
+            'contents': [{'parts': [{'text': prompt}]}]
+        },
+        timeout=TIMEOUT,
+    )
+    _check_response(response, 'Gemini')
+    data = response.json()
+    return data['candidates'][0]['content']['parts'][0]['text']
+
+def _check_response(response, provider):
+    if response.status_code in (429, 402):
+        raise Exception(
+            'AI model limit reached for %s. Please upgrade your plan, '
+            'switch to a different model, or use a different provider in Settings.' % provider
+        )
+    if response.status_code >= 400:
+        raise Exception('AI provider (%s) error: %s' % (provider, response.text[:300]))
+
+=== ./services/embedding_service.py ===
+# -*- coding: utf-8 -*-
+import hashlib
+import json
+import requests
+from odoo.exceptions import UserError
+
+
+class EmbeddingService:
+
+    MISTRAL_API_URL = "https://api.mistral.ai/v1/embeddings"
+    GOOGLE_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
+
+    @staticmethod
+    def get_active_model(env):
+        model_id = env['ir.config_parameter'].sudo().get_param('law_case_review.embedding_model_id')
+        if not model_id:
+            raise UserError("No embedding model is configured. Please set one in Settings.")
+        model_option = env['law.embedding.model.option'].sudo().browse(int(model_id))
+        if not model_option.exists():
+            raise UserError("The configured embedding model no longer exists. Please reselect one in Settings.")
+        return model_option
+
+    @staticmethod
+    def embed(env, text):
+        model_option = EmbeddingService.get_active_model(env)
+        cache_key = hashlib.sha256(f"{model_option.model_string}:{model_option.dimension}:{text}".encode()).hexdigest()
+        cached = env['law.ai.cache'].sudo().search([
+            ('cache_key', '=', cache_key),
+            ('cache_type', '=', 'embedding'),
+        ], limit=1)
+        if cached:
+            return json.loads(cached.value)
+        if model_option.provider == 'google':
+            embedding = EmbeddingService._call_google(env, model_option.model_string, text, model_option.dimension)
+        else:
+            embedding = EmbeddingService._call_mistral(env, model_option.model_string, text)
+
+        env['law.ai.cache'].sudo().create({
+            'cache_key': cache_key,
+            'cache_type': 'embedding',
+            'value': json.dumps(embedding),
+        })
+        return embedding
+
+    @staticmethod
+    def _call_mistral(env, model_string, text):
+        api_key = env['ir.config_parameter'].sudo().get_param('law_case_review.mistral_api_key')
+        if not api_key:
+            raise UserError("Mistral API key is not configured. Please set it in Settings.")
+        headers = {"Authorization": f"Bearer {api_key}"}
+        payload = {"model": model_string, "input": text}
+        response = requests.post(
+            EmbeddingService.MISTRAL_API_URL,
+            json=payload,
+            headers=headers,
+            timeout=120,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data["data"][0]["embedding"]
+
+    @staticmethod
+    def _call_google(env, model_string, text, dimension=None):
+        api_key = env['ir.config_parameter'].sudo().get_param('law_case_review.google_api_key')
+        if not api_key:
+            raise UserError("Google API key is not configured. Please set it in Settings.")
+        url = EmbeddingService.GOOGLE_API_URL.format(model=model_string)
+        headers = {
+            "x-goog-api-key": api_key,
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "model": f"models/{model_string}",
+            "content": {"parts": [{"text": text}]},
+        }
+        # Google's default output is 3072-dim; requesting a smaller size
+        # (768/1536) via outputDimensionality lets it fit our other
+        # prepared vector columns instead of always using the 3072 one.
+        if dimension:
+            payload["outputDimensionality"] = dimension
+        response = requests.post(url, json=payload, headers=headers, timeout=120)
+        response.raise_for_status()
+        data = response.json()
+        return data["embedding"]["values"]
+
+    @staticmethod
+    def sync_embedding_vector(env, table, record_id, embedding_vector, dimension):
+        """
+        Writes embedding_vector (a plain Python list of floats) into the
+        dimension-specific Postgres `vector` column for one record - e.g.
+        embedding_vector_1024 for a 1024-dim model. These columns aren't
+        real Odoo fields (added via raw SQL), so the ORM can't set them
+        directly - every place that saves an embedding must call this too,
+        or that record silently won't show up in pgvector-based searches.
+        """
+        column = f"embedding_vector_{dimension}"
+        vector_literal = '[' + ','.join(str(x) for x in embedding_vector) + ']'
+        env.cr.execute(
+            f"UPDATE {table} SET {column} = %s::vector WHERE id = %s",
+            [vector_literal, record_id]
+        )
+
+=== ./services/__init__.py ===
+from . import ai_provider_service
+from . import embedding_service
+from . import semantic_search_service
+from . import playbook_retrieval_service
+from . import case_playbook_comparison_service
+from . import case_qa_service
+from . import timeline_extraction_service
+from . import case_brief_service
+
+=== ./services/semantic_search_service.py ===
+# -*- coding: utf-8 -*-
+import math
+
+
+class SemanticSearchService:
+    MIN_SCORE = 0.65
+
+    @staticmethod
+    def cosine_similarity(vec1, vec2):
+        dot = sum(a * b for a, b in zip(vec1, vec2))
+        norm1 = math.sqrt(sum(a * a for a in vec1))
+        norm2 = math.sqrt(sum(b * b for b in vec2))
+        if norm1 == 0 or norm2 == 0:
+            return 0.0
+        return dot / (norm1 * norm2)
+
+    @staticmethod
+    def _column_and_cast(dimension):
+        """
+        Returns (column_name, cast_type) for a given embedding dimension.
+        Dimensions above 2000 can't use a plain `vector` index (pgvector's
+        hnsw cap), so those columns are indexed via `halfvec` instead - the
+        query needs to cast to the same type the index was built with.
+        """
+        column = f"embedding_vector_{dimension}"
+        cast_type = f"halfvec({dimension})" if dimension > 2000 else "vector"
+        return column, cast_type
+
+    @staticmethod
+    def search(env, query_text, query_embedding=None, source_type=None, source_ids=None, top_k=5):
+        from . embedding_service import EmbeddingService
+        if query_embedding is None:
+            query_embedding = EmbeddingService.embed(env, query_text)
+        model_option = EmbeddingService.get_active_model(env)
+        active_model_string = model_option.model_string
+        column, cast_type = SemanticSearchService._column_and_cast(model_option.dimension)
+
+        MIN_SCORE = SemanticSearchService.MIN_SCORE
+        MIN_RESULTS = 3
+        CANDIDATE_LIMIT = 20  # pull extra candidates, then apply threshold/fallback logic in Python 
+
+        vector_literal = '[' + ','.join(str(x) for x in query_embedding) + ']'
+
+        where_clauses = [f"{column} IS NOT NULL", "embedding_model = %s"]
+        params = [active_model_string]
+
+        if source_ids:
+            where_clauses.append("source_id IN %s")
+            params.append(tuple(source_ids))
+        elif source_type:
+            where_clauses.append("source_id IN (SELECT id FROM law_playbook_source WHERE source_type = %s)")
+            params.append(source_type)
+
+        where_sql = " AND ".join(where_clauses)
+
+        query = f"""
+            SELECT id, 1 - ({column} <=> %s::{cast_type}) AS score
+            FROM law_playbook_clause
+            WHERE {where_sql}
+            ORDER BY {column} <=> %s::{cast_type}
+            LIMIT %s
+        """
+        params = [vector_literal] + params + [vector_literal, CANDIDATE_LIMIT]
+
+        env.cr.execute(query, params)
+        rows = env.cr.fetchall()  # [(id, score), ...]
+
+        above_threshold = [(score, rid) for rid, score in rows if score >= MIN_SCORE]
+        chosen = above_threshold if len(above_threshold) >= MIN_RESULTS else [(score, rid) for rid, score in rows[:MIN_RESULTS]]
+        chosen = chosen[:top_k]
+
+        clause_ids = [rid for score, rid in chosen]
+        clauses_by_id = {c.id: c for c in env['law.playbook.clause'].browse(clause_ids)}
+
+        return [{'score': score, 'clause': clauses_by_id[rid]} for score, rid in chosen if rid in clauses_by_id]
+
+    @staticmethod
+    def search_case_context(env, query_text, case_id, source_ids=None, top_k=8):
+        """
+        Searches both the case's own document chunks and the case's selected
+        playbook clauses, scoped strictly to this case - no other case's
+        documents, no unrelated playbook sources.
+        Returns a combined, score-sorted list of type-tagged results:
+        [{'type': 'chunk', 'score': ..., 'chunk': rec}, {'type': 'clause', 'score': ..., 'clause': rec}, ...] 
+        """
+        from . embedding_service import EmbeddingService
+        query_embedding = EmbeddingService.embed(env, query_text)
+        model_option = EmbeddingService.get_active_model(env)
+        active_model_string = model_option.model_string
+        column, cast_type = SemanticSearchService._column_and_cast(model_option.dimension)
+        vector_literal = '[' + ','.join(str(x) for x in query_embedding) + ']'
+
+        results = []
+
+        # 1. Case's own document chunks
+        chunk_query = f"""
+            SELECT id, 1 - ({column} <=> %s::{cast_type}) AS score
+            FROM law_case_document_chunk
+            WHERE case_id = %s AND {column} IS NOT NULL AND embedding_model = %s
+            ORDER BY {column} <=> %s::{cast_type}
+            LIMIT %s
+        """
+        env.cr.execute(chunk_query, [vector_literal, case_id, active_model_string, vector_literal, top_k])
+        chunk_rows = env.cr.fetchall()
+        chunks_by_id = {c.id: c for c in env['law.case.document.chunk'].browse([rid for rid, score in chunk_rows])}
+        for rid, score in chunk_rows:
+            if rid in chunks_by_id:
+                results.append({'type': 'chunk', 'score': score, 'chunk': chunks_by_id[rid]})
+
+        # 2. Playbook clauses from this case's selected sources only
+        if source_ids:
+            clause_query = f"""
+                SELECT id, 1 - ({column} <=> %s::{cast_type}) AS score
+                FROM law_playbook_clause
+                WHERE source_id IN %s AND {column} IS NOT NULL AND embedding_model = %s
+                ORDER BY {column} <=> %s::{cast_type}
+                LIMIT %s
+            """
+            env.cr.execute(clause_query, [vector_literal, tuple(source_ids), active_model_string, vector_literal, top_k])
+            clause_rows = env.cr.fetchall()
+            clauses_by_id = {c.id: c for c in env['law.playbook.clause'].browse([rid for rid, score in clause_rows])}
+            for rid, score in clause_rows:
+                if rid in clauses_by_id:
+                    results.append({'type': 'clause', 'score': score, 'clause': clauses_by_id[rid]})
+
+        results.sort(key=lambda x: x['score'], reverse=True)
+        return results[:top_k]
+
+=== ./services/case_playbook_comparison_service.py ===
+# -*- coding: utf-8 -*-
+
+import json
+import re
+from . import ai_provider_service
+from . playbook_retrieval_service import find_matching_playbook_clauses
+
+def _build_case_text(case):
+    parts = []
+    if case.description:
+        parts.append(case.description)
+    for doc in case.document_ids:
+        if doc.state == 'confirmed' and doc.ocr_text:
+            parts.append(doc.ocr_text)
+    return "\n\n".join(parts)
+
+def _classify_match(env, case_text, clause):
+    prompt = (
+        "You are a legal assistant helping a lawyer prepare a case.\n"
+        "Below is a summary of the client's case, followed by one provision "
+        "from a legal reference document (e.g. a constitutional article or statute).\n\n"
+        "Decide ONE of the following for this specific provision, based only on the case text given:\n"
+        "- \"violation\": the case facts describe a possible violation of this provision "
+        "(something was done that this provision prohibits or that breaches a right it grants)\n"
+        "- \"defense\": this provision could support the client's position or be used in their defense\n"
+        "- \"related\": this provision is topically related but doesn't clearly support either of the above\n\n"
+        "Respond ONLY as JSON, no markdown, no explanation outside the JSON:\n"
+        "{\"match_type\": \"violation|defense|related\", \"explanation\": \"<2-3 sentence reasoning>\"}\n\n"
+        "Case summary:\n" + case_text + "\n\n"
+        "Provision (Article/Section " + (clause.clause_number or '') + " - " + (clause.title or '') + "):\n"
+        + (clause.text or '')
+    )
+    answer = ai_provider_service.call_llm(env, prompt)
+    cleaned = re.sub(r'^```json\s*|\s*```$', '', answer.strip())
+    return json.loads(cleaned)
+
+
+def run_case_playbook_comparison(env, case):
+    case_text = _build_case_text(case)
+    if not case_text.strip():
+        raise Exception("This case has no description or confirmed document text to compare.")
+
+    if not case.playbook_source_ids:
+        raise Exception("Please select at least one playbook source before running Find.")
+
+    source_ids = case.playbook_source_ids.ids
+
+    matches = find_matching_playbook_clauses(
+        env, query_text=case_text, source_ids=source_ids, top_k=10
+    )
+    env['law.case.playbook.match'].search([('case_id', '=', case.id)]).unlink()
+
+    # Confidence is relative to this specific search's own top score, not a
+    # fixed global number - because absolute score meaning varies per case.
+    CONFIDENCE_MARGIN = 0.02
+    top_score = max((m['score'] for m in matches), default=0.0)
+
+    for m in matches:
+        clause = m['clause']
+        try:
+            classification = _classify_match(env, case_text, clause)
+        except Exception:
+            # Classification failed for this one clause - skip it rather than
+            # abort the whole comparison. The match was found by search, we just
+            # couldn't get an LLM verdict on it this time.
+            continue
+        confidence = 'strong' if (top_score - m['score']) <= CONFIDENCE_MARGIN else 'possible'
+        env['law.case.playbook.match'].create({
+            'case_id': case.id,
+            'clause_id': clause.id,
+            'match_type': classification.get('match_type', 'related'),
+            'explanation': classification.get('explanation', ''),
+            'score': m['score'],
+            'confidence': confidence,
+        })
+
+=== ./services/timeline_extraction_service.py ===
+# -*- coding: utf-8 -*-
+
+import json
+from odoo.exceptions import UserError
+from . import ai_provider_service
+
+
+def extract_timeline_events(env, document):
+    """
+    document: a law.case.document record with ocr_text populated.
+    Returns: list of dicts ready to create law.case.timeline.event records.
+    Does NOT create records itself - caller decides what to do with results.
+    """
+    if not document.ocr_text:
+        return []
+
+    prompt = """
+Read the following legal document text and extract every distinct dated event
+mentioned in it. Return ONLY a raw JSON array, no markdown, no explanation,
+no code fences. Each item must have exactly these keys:
+
+{
+  "event_date": "YYYY-MM-DD or empty string if not a clean/parseable date",
+  "event_date_text": "the date exactly as written in the document",
+  "title": "short title, under 10 words",
+  "description": "one or two sentence description of what happened",
+  "event_type": "one of: filing, hearing, notice, agreement, incident, correspondence, other",
+  "source_snippet": "the exact sentence(s) from the document text that mention this event, under 250 characters"
+}
+
+If the document contains no dated events, return an empty array: []
+Do not invent dates or events that are not explicitly present in the text.
+
+Document text:
+""" + document.ocr_text
+
+    try:
+        ai_response = ai_provider_service.call_llm(env, prompt)
+        events = json.loads(ai_response)
+    except (json.JSONDecodeError, ValueError) as e:
+        env['ir.logging'].sudo().create({
+            'name': 'law_case_review',
+            'type': 'server',
+            'level': 'ERROR',
+            'message': 'Timeline extraction JSON parse failed for document %s: %s' % (document.id, str(e)),
+            'path': 'law_case_review.timeline_extraction_service',
+            'func': 'extract_timeline_events',
+            'line': '0',
+        })
+        return []
+
+    if not isinstance(events, list):
+        return []
+
+    results = []
+    for item in events:
+        if not isinstance(item, dict) or not item.get('title'):
+            continue
+        results.append({
+            'event_date': item.get('event_date') or False,
+            'event_date_text': item.get('event_date_text', ''),
+            'title': item.get('title', '')[:250],
+            'description': item.get('description', ''),
+            'event_type': item.get('event_type') if item.get('event_type') in
+                ('filing', 'hearing', 'notice', 'agreement', 'incident', 'correspondence', 'other')
+                else 'other',
+            'source_snippet': item.get('source_snippet', '')[:500],
+        })
+    return results
+
+=== ./__manifest__.py ===
+# -*- coding: utf-8 -*-
+{
+    'name': "law_case_review",
+
+    'summary': "Short (1 phrase/line) summary of the module's purpose",
+
+    'description': """
+Long description of module's purpose
+    """,
+
+    'author': "Yotta Software Solutions",
+    'website': "https://www.yourcompany.com",
+
+    
+    'category': 'Uncategorized',
+    'version': '19.0.0.0.0',
+
+    'post_init_hook': 'post_init_hook',
+
+    
+    'depends': ['base', 'base_setup', 'queue_job', 'dms'],
+    'external_dependencies': {
+        'python': ['requests', 'markdown'],
+    },
+
+   
+    'data': [
+        'security/law_case_security.xml',
+        'security/law_case_record_rules.xml',
+        'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
+        'data/queue_job_data.xml',
+        'data/dms_data.xml',
+        'wizards/embedding_model_change_wizard_views.xml',
+        'views/law_case_views.xml',
+        'views/law_case_document_views.xml',
+        'views/res_config_settings_views.xml',
+        'views/law_ai_model_option_views.xml',
+        'views/law_client_request_views.xml',
+        'views/law_embedding_model_option_views.xml',
+        'views/law_playbook_source_views.xml',
+        'wizards/client_request_upload_wizard_views.xml',
+        'views/practice_area_views.xml',
+        'views/menus.xml',
+    ],
+
+    'assets':{
+        'web.assets_backend':[
+            'law_case_review/static/src/js/client_request_list.js',
+            'law_case_review/static/src/xml/client_request_list.xml',
+            'law_case_review/static/src/js/document_preview_panel.js',
+            'law_case_review/static/src/xml/document_preview_panel.xml',
+            'law_case_review/static/src/js/form_controller_preview.js',
+            'law_case_review/static/src/xml/form_controller_preview.xml',
+            'law_case_review/static/src/css/document_preview_panel.css',
+            'law_case_review/static/src/js/case_qa_panel.js',
+            'law_case_review/static/src/js/case_qa_form_controller.js',
+            'law_case_review/static/src/xml/case_qa_templates.xml',
+            'law_case_review/static/src/css/case_qa_panel.scss',
+            'law_case_review/static/src/js/embedding_reembed_progress_widget.js',
+            'law_case_review/static/src/xml/embedding_reembed_progress_widget.xml',
+            'law_case_review/static/src/js/client_request_progress_widget.js',
+            'law_case_review/static/src/xml/client_request_progress_widget.xml',
+            'law_case_review/static/src/js/async_field_watcher.js',
+            'law_case_review/static/src/xml/async_field_watcher.xml',
+        ],
+    },
+}
+
+
+
+=== ./__init__.py ===
+# -*- coding: utf-8 -*-
+
+from . import models
+from . import services
+from . import wizards
+from .hooks import post_init_hook
+
+=== ./views/menus.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_law_case_root" name="Law Case Review"/>
+    <menuitem id="menu_law_case"
+              name="Cases"
+              parent="menu_law_case_root"
+              action="action_law_case"/>
+    <menuitem id="menu_law_client_request"
+          name="Client Requests"
+          parent="menu_law_case_root"
+          action="action_law_client_request"/>
+
+    <menuitem id="menu_law_case_config"
+              name="Configuration"
+              parent="menu_law_case_root"
+              sequence="100"/>
+
+    <menuitem id="menu_law_ai_model_option"
+          name="AI Models"
+          parent="menu_law_case_config"
+          action="action_law_ai_model_option"/>
+    <menuitem id="menu_law_embedding_model_option"
+          name="Embedding Models"
+          parent="menu_law_case_config"
+          action="action_law_embedding_model_option"/>
+    <menuitem id="menu_law_playbook_source"
+          name="Playbook Sources"
+          parent="menu_law_case_config"
+          action="action_law_playbook_source"/>
+    <menuitem id="menu_law_practice_area"
+          name="Practice Areas"
+          parent="menu_law_case_config"
+          action="action_law_practice_area"/>
+
+    <record id="action_law_case_settings" model="ir.actions.act_window">
+      <field name="name">Settings</field>
+      <field name="res_model">res.config.settings</field>
+      <field name="view_mode">form</field>
+      <field name="target">current</field>
+      <field name="context">{'module': 'law_case_review'}</field>
+  </record>
+    <menuitem id="menu_law_case_settings"
+          name="Settings"
+          parent="menu_law_case_config"
+          action="action_law_case_settings"
+          sequence="100"/>
+</odoo>
+
+=== ./views/res_config_settings_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_case_review_settings" model="ir.ui.view">
+        <field name="name">law.case.review.settings</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Law Case Review" string="Law Case Review" name="law_case_review" logo="/law_case_review/static/description/icon.png">
+                    <block title="AI Configuration" name="law_ai_setting_container">
+                        <setting id="law_ai_provider_setting">
+                            <field name="law_ai_provider"/>
+                        </setting>
+                        <setting id="law_ai_model_setting">
+                            <field name="law_ai_model_id" placeholder="e.g. gpt-4o"/>
+                        </setting>
+                        <setting id="law_ai_api_key_setting">
+                            <field name="law_ai_api_key" password="True"/>
+                        </setting>
+                    </block>
+                    <block title="Embedding Configuration" name="law_embedding_setting_container">
+                        <setting id="law_embedding_provider_setting">
+                            <field name="law_embedding_provider"/>
+                        </setting>
+                        <setting id="law_embedding_model_setting">
+                            <field name="law_embedding_model_id" placeholder="e.g. mistral-embed"/>
+                        </setting>
+                        <setting id="law_mistral_api_key_setting" invisible="law_embedding_provider != 'mistral'">
+                            <field name="law_mistral_api_key" password="True"/>
+                        </setting>
+                        <setting id="law_google_api_key_setting" invisible="law_embedding_provider != 'google'">
+                            <field name="law_google_api_key" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+
+=== ./views/law_playbook_source_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_law_playbook_source_form" model="ir.ui.view">
+        <field name="name">law.playbook.source.form</field>
+        <field name="model">law.playbook.source</field>
+        <field name="arch" type="xml">
+            <form string="Playbook Source">
+                <header>
+                    <button name="action_process" type="object" string="Process Document"
+                            invisible="state in ('processing', 'done')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_clauses" icon="fa-list">
+                            <field name="clause_count" widget="statinfo" string="Clauses"/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                        <field name="source_type"/>
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_law_playbook_source_list" model="ir.ui.view">
+        <field name="name">law.playbook.source.list</field>
+        <field name="model">law.playbook.source</field>
+        <field name="arch" type="xml">
+            <list string="Playbook Sources">
+                <field name="name"/>
+                <field name="source_type"/>
+                <field name="clause_count"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_law_playbook_source" model="ir.actions.act_window">
+        <field name="name">Playbook Sources</field>
+        <field name="res_model">law.playbook.source</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_law_playbook_clause_list" model="ir.ui.view">
+        <field name="name">law.playbook.clause.list</field>
+        <field name="model">law.playbook.clause</field>
+        <field name="arch" type="xml">
+            <list string="Playbook Clauses">
+                <field name="clause_number"/>
+                <field name="title"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>
+
+=== ./views/law_client_request_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+        <record id="view_law_client_request_form" model="ir.ui.view">
+            <field name="name">law.client.request.form</field>
+            <field name="model">law.client.request</field>
+            <field name="arch" type="xml">
+                <form string="Client Request">
+                    <header>
+                        <button name="action_approve" string="Approve" type="object" class="btn-primary" invisible = "state != 'request'"/>
+                        <button name="action_reject" string="Reject" type="object" invisible = "state != 'request'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="request,rejected,approved"/>
+                    </header>
+                    <sheet>
+                        <group string="Personal Details">
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="mobile"/>
+                        </group>
+                        <group string="Address Details">
+                            <field name="street"/>
+                            <field name="street2"/>
+                            <field name="city"/>
+                            <field name="state_id"/>
+                            <field name="zip"/>
+                            <field name="country_id"/>
+                            <field name="lawyer_id" readonly="not is_case_manager"/>
+                            <field name="is_case_manager" invisible="1"/>
+                            <field name="company_id"/>
+                        </group>
+                        <group string="Matter Deetials">
+                            <field name="matter_type"/>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                    <field name="file" invisible="1"/>
+                    <field name="file_name" invisible="1"/>
+                </form>
+            </field>
+        </record>
+        <record id="view_law_client_request_list" model="ir.ui.view">
+            <field name="name">law.client.request.list</field>
+            <field name="model">law.client.request</field>
+            <field name="arch" type="xml">
+                <list string="Client Request">
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="lawyer_id"/>
+                    <field name="matter_type"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_law_client_request" model="ir.actions.act_window">
+            <field name="name">Client Request</field>
+            <field name="res_model">law.client.request</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>
+
+=== ./views/law_ai_model_option_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_law_ai_model_option_list" model="ir.ui.view">
+        <field name="name">law.ai.model.option.list</field>
+        <field name="model">law.ai.model.option</field>
+        <field name="arch" type="xml">
+            <list string="AI Models" editable="bottom">
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="model_string"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_law_ai_model_option" model="ir.actions.act_window">
+        <field name="name">AI Models</field>
+        <field name="res_model">law.ai.model.option</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>
+
+=== ./views/practice_area_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_law_practice_area_list" model="ir.ui.view">
+            <field name="name">law.practice.area.list</field>
+            <field name="model">law.practice.area</field>
+            <field name="arch" type="xml">
+                <list string="Practice Areas" editable="bottom">
+                    <field name="name"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+        <record id="action_law_practice_area" model="ir.actions.act_window">
+            <field name="name">Practice Areas</field>
+            <field name="res_model">law.practice.area</field>
+            <field name="view_mode">list</field>
+        </record>
+    </data>
+</odoo>
+
+=== ./views/law_case_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_law_case_form" model="ir.ui.view">
+            <field name="name">law.case.form</field>
+            <field name="model">law.case</field>
+            <field name="arch" type="xml">
+                <form string="Law Case">
+                    <header>
+                        <field name="playbook_match_running" invisible="1"/>
+                        <div class="oe_button_box">
+                            <button name="action_find_playbook_matches" type="object" string="Find"
+                                    class="btn-primary" invisible="playbook_match_running"/>
+                            <button string="Finding..." class="btn-primary" disabled="disabled"
+                                    invisible="not playbook_match_running"/>
+                        </div>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_open_dms_directory" type="object"
+                                    class="oe_stat_button" icon="fa-folder-open"
+                                    invisible="not dms_directory_id">
+                                <div class="o_stat_info">
+                                    <span class="o_stat_text">Documents</span>
+                                </div>
+                            </button>
+                        </div>
+                        <group>
+                            <field name="name"/>
+                            <field name="client_id"/>
+                            <field name="lawyer_id" readonly="not is_case_manager"/>
+                            <field name="is_case_manager" invisible="1"/>
+                            <field name="practice_area_id"/>
+                            <field name="outcome"/>
+                            <field name="closure_date" invisible="outcome == 'open'"/>
+                            <field name="description"/>
+                            <field name="playbook_source_ids" widget="many2many_tags"/>
+                        </group>
+                        <notebook>
+                            <page string="Documents">
+                                <field name="document_ids">
+                                    <list>
+                                        <field name="name"/>
+                                        <field name="document_type"/>
+                                        <field name="state"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Parties">
+                                <field name="party_ids">
+                                    <list editable="bottom">
+                                        <field name="name"/>
+                                        <field name="role"/>
+                                        <field name="contact_phone"/>
+                                        <field name="contact_email"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Hearings">
+                                <field name="hearing_ids">
+                                    <list editable="bottom">
+                                        <field name="hearing_date"/>
+                                        <field name="court"/>
+                                        <field name="judge"/>
+                                        <field name="notes"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Playbook Matches">
+                                <field name="match_ids">
+                                    <list>
+                                        <field name="clause_number"/>
+                                        <field name="clause_title"/>
+                                        <field name="match_type" widget="badge" decoration-danger="match_type == 'violation'" decoration-success="match_type == 'defense'"/>
+                                        <field name="confidence" widget="badge" decoration-success="confidence == 'strong'" decoration-muted="confidence == 'possible'"/>
+                                        <field name="score"/>
+                                        <field name="explanation"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Q&amp;A History">
+                                <field name="qa_log_ids" readonly="1">
+                                    <list>
+                                        <field name="create_date" string="Asked On"/>
+                                        <field name="user_id"/>
+                                        <field name="question"/>
+                                        <field name="answer"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Timeline" name="timeline">
+                               <field name="timeline_extraction_running" widget="async_field_watcher"/>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <button name="action_extract_timeline_all" string="Extract Timeline (All Documents)" type="object" class="btn-secondary" invisible="0"/>
+                                    <span class="text-muted" invisible="not draft_timeline_event_label">
+                                        <field name="draft_timeline_event_label" nolabel="1"/>
+                                    </span>
+                                </div>
+                                <field name="visible_timeline_event_ids">
+                                    <list editable="bottom" decoration-muted="state == 'draft'" delete="false">
+                                        <field name="event_date"/>
+                                        <field name="event_date_text" optional="hide"/>
+                                        <field name="title"/>
+                                        <field name="event_type"/>
+                                        <field name="description" optional="hide"/>
+                                        <field name="source_snippet" optional="hide"/>
+                                        <field name="document_id"/>
+                                        <field name="state" widget="badge" decoration-warning="state == 'draft'" decoration-success="state == 'confirmed'" decoration-danger="state == 'rejected'"/>
+                                        <button name="action_preview_document" string="Preview" type="object" icon="fa-eye" invisible="not document_id"/>
+                                        <button name="action_confirm" string="Confirm" type="object" icon="fa-check" invisible="state != 'draft'"/>
+                                        <button name="action_reject" string="Reject" type="object" icon="fa-times" invisible="state != 'draft'"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Case Brief" name="case_brief">
+                                <field name="case_brief_generating" widget="async_field_watcher"/>
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <button name="action_generate_case_brief" string="Generate Case Brief" type="object" class="btn-secondary" invisible="case_brief_generating"/>
+                                    <span class="text-muted" invisible="not case_brief_generated_at">
+                                        <field name="case_brief_generated_at" nolabel="1" readonly="1"/>
+                                    </span>
+                                </div>
+                                <div class="alert alert-warning" role="alert" invisible="case_brief_stale_count == 0">
+                                    <field name="case_brief_stale_count" nolabel="1"/> document(s) changed since this brief was generated — consider regenerating.
+                                </div>
+                                <field name="case_brief_html" nolabel="1" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_law_case_list" model="ir.ui.view">
+            <field name="name">law.case.list</field>
+            <field name="model">law.case</field>
+            <field name="arch" type="xml">
+                <list string="Law Cases">
+                    <field name="name"/>
+                    <field name="client_id"/>
+                    <field name="lawyer_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_law_case" model="ir.actions.act_window">
+            <field name="name">Law Cases</field>
+            <field name="res_model">law.case</field>
+            <field name="view_mode">list,form</field>
+        </record>        
+    </data>
+</odoo>
+
+=== ./views/law_embedding_model_option_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_embedding_model_option_list" model="ir.ui.view">
+        <field name="name">law.embedding.model.option.list</field>
+        <field name="model">law.embedding.model.option</field>
+        <field name="arch" type="xml">
+            <list string="Embedding Models" editable="bottom">
+                <field name="name"/>
+                <field name="provider"/>
+                <field name="model_string"/>
+                <field name="dimension"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="action_law_embedding_model_option" model="ir.actions.act_window">
+        <field name="name">Embedding Models</field>
+        <field name="res_model">law.embedding.model.option</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>
+
+=== ./views/law_case_document_views.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_case_document_form" model="ir.ui.view">
+        <field name="name">law.case.document.form</field>
+        <field name="model">law.case.document</field>
+        <field name="arch" type="xml">
+            <form string="Case Document">
+                <sheet>
+                    <field name="text_extraction_queued" widget="async_field_watcher"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="case_id" force_save="1"/>
+                        <field name="document_type"/>
+                        <field name="file" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <div class="d-flex gap-2 mb-3">
+                        <button name="action_extract_text_async" string="Extract Text" type="object" class="btn-secondary" invisible="text_extraction_queued"/>
+                        <button string="Extracting..." class="btn-secondary" disabled="disabled" invisible="not text_extraction_queued"/>
+                        <button name="action_extract_timeline_async" string="Extract Timeline" type="object" class="btn-secondary" invisible="timeline_extracted or timeline_extraction_queued"/>
+                    </div>
+                    <notebook>
+                        <page string="Extracted Text">
+                            <field name="ocr_text" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
+
+=== ./static/src/xml/client_request_progress_widget.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.ClientRequestProgress">
+        <div class="d-flex justify-content-center p-4">
+            <div class="card shadow-sm" style="max-width: 480px; width: 100%;">
+                <div class="card-body p-4 text-center">
+                    <i class="fa fa-circle-o-notch fa-spin fa-2x text-primary mb-3" title="Processing"/>
+                    <h5>Processing your document...</h5>
+                    <p class="text-muted mb-0">This may take a moment for large files. Please keep this window open.</p>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
+
+=== ./static/src/xml/form_controller_preview.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.FormView.PreviewButton" t-inherit="web.FormView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-create-button']/button" position="after">
+            <button t-if="showPreviewButton" type="button" class="btn btn-secondary"
+                    style="margin-left:8px;" t-on-click="onClickPreview">
+                Preview
+            </button>
+            <DocumentPreviewPanel t-if="showPreviewPanel"
+                                   resModel="props.resModel"
+                                   resId="model.root.resId"
+                                   fileName="model.root.data.file_name"/>
+        </xpath>
+    </t>
+</templates>
+
+=== ./static/src/xml/document_preview_panel.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.DocumentPreviewPanel">
+        <div class="o_document_preview_widget">
+            <div class="o_document_preview_panel">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong>Document Preview</strong>
+                    <div style="display:flex; align-items:center; gap:4px">
+                        <t t-if="hasFile and isImage">
+                            <button type="button" class="btn btn-sm btn-secondary" t-on-click="zoomOut">-</button>
+                            <button type="button" class="btn btn-sm btn-secondary" t-on-click="zoomReset">
+                                <t t-esc="Math.round(zoomState.level * 100) + '%'"/>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" t-on-click="zoomIn">+</button>
+                        </t>
+                        <button type="button" class="btn btn-sm btn-secondary" t-on-click="closePanel">X</button>
+                    </div>
+                </div>
+                <div t-if="!hasFile" style="padding: 20px; text-align: center; color: #888;">
+                    No preview available
+                </div>
+                <div t-if="hasFile and (isPdf or isImage)" class="o_document_preview_zoom_wrapper">
+                    <div t-att-style="zoomStyle" class="o_document_preview_zoom_content">
+                        <iframe t-if="isPdf" t-att-src="pdfUrl"/>
+                        <img t-if="isImage" t-att-src="fileUrl"/>
+                    </div>
+                </div>
+                <div t-if="hasFile and !isPdf and !isImage" style="padding: 20px; text-align: center; color: #888;">
+                    Preview not supported for this file type
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
+
+=== ./static/src/xml/case_qa_templates.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+   <t t-name="law_case_review.FormView.CaseQAButton" t-inherit="web.FormView" t-inherit-mode="extension">
+        <xpath expr="//t[@t-set-slot='control-panel-create-button']/button" position="after">
+            <div t-if="showCaseQAIcon" t-portal="'body'" class="o_case_qa_icon"
+                 t-att-style="caseQAState.positioned ? ('left:' + caseQAState.x + 'px; top:' + caseQAState.y + 'px;') : ''"
+                 t-on-pointerdown="onCaseQAIconPointerDown"
+                 t-on-click="onClickCaseQAIcon">
+                💬
+            </div>
+            <CaseQAPanel t-if="showCaseQAPanel" t-portal="'body'" resId="model.root.resId"/>
+        </xpath>
+    </t>
+
+    <t t-name="law_case_review.CaseQAPanel">
+        <div class="o_case_qa_panel d-flex flex-column overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center p-2 border-bottom flex-shrink-0">
+                <span class="fw-bold">
+                    <i class="fa fa-comments me-1"/> Case Q&amp;A
+                </span>
+                <div class="d-flex align-items-center gap-2">
+                    <a t-if="state.messages.length > 0" href="#"
+                       class="btn btn-sm btn-link text-muted"
+                       t-on-click.prevent="onClickClearChat">
+                        <i class="fa fa-trash me-1"/> Clear Chat
+                    </a>
+                    <button type="button" class="btn btn-sm btn-link text-muted" t-on-click="closePanel">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+            <div class="flex-grow-1 overflow-auto p-3" style="min-height: 0;">
+                <div t-if="state.messages.length === 0" class="text-muted text-center mt-4">
+                    Ask a question about this case to get started.
+                </div>
+                <div t-foreach="state.messages" t-as="msg" t-key="msg_index" class="mb-3">
+                    <div class="d-flex justify-content-end align-items-start gap-2 mb-2 w-100">
+                        <div class="bg-primary text-white rounded-4 shadow-sm px-3 py-2 text-break" style="max-width: 80%;">
+                            <span t-esc="msg.question"/>
+                        </div>
+                        <i class="fa fa-user-circle fa-lg text-muted mt-1"/>
+                    </div>
+                    <div class="d-flex justify-content-start align-items-start gap-2 w-100">
+                        <i class="fa fa-magic fa-lg text-primary mt-1"/>
+                        <div class="bg-light border rounded-4 shadow-sm px-3 py-2 text-break" style="max-width: 80%;">
+                            <span t-if="msg.answer" t-esc="msg.answer"/>
+                            <span t-else="" class="text-muted"><i class="fa fa-spinner fa-spin me-1"/> Thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-end p-2 border-top gap-2 flex-shrink-0">
+                <textarea
+                    class="form-control rounded-3"
+                    rows="1"
+                    placeholder="Ask a question about this case..."
+                    t-model="state.question"
+                    t-on-keydown="onKeydown"
+                    t-on-input="onInputResize"
+                    t-att-disabled="state.asking"/>
+                <button class="btn btn-primary rounded-circle"
+                        style="width: 38px; height: 38px;"
+                        t-on-click="onClickAsk"
+                        t-att-disabled="state.asking">
+                    <i class="fa fa-paper-plane"/>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>
+
+=== ./static/src/xml/client_request_list.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.ListView.Buttons"
+       t-inherit="web.ListView.Buttons"
+       t-inherit-mode="extension">
+        <xpath expr="." position="inside">
+            <button type="button"
+                    class="btn btn-secondary"
+                    t-if="showUploadButton"
+                    t-on-click="onUploadDocument">
+                Upload
+            </button>
+        </xpath>
+    </t>
+</templates>
+
+=== ./static/src/xml/embedding_reembed_progress_widget.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.EmbeddingReembedProgress">
+        <div class="o_law_reembed d-flex justify-content-center p-2">
+            <div class="card shadow-sm" style="max-width: 520px; width: 100%;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa fa-refresh fa-lg text-primary me-2"/>
+                        <h4 class="mb-0">Re-embedding in Progress</h4>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold">
+                            <t t-esc="state.done"/> / <t t-esc="state.total"/> processed
+                        </span>
+                        <span t-if="state.errors > 0" class="badge text-bg-danger">
+                            <t t-esc="state.errors"/> errors
+                        </span>
+                    </div>
+
+                    <div class="progress mb-3" style="height: 22px;">
+                        <div t-attf-class="progress-bar {{ state.status === 'done' ? 'bg-success' : 'progress-bar-striped progress-bar-animated' }}"
+                             role="progressbar"
+                             t-attf-style="width: {{progressPercent}}%"
+                             t-esc="progressPercent + '%'"/>
+                    </div>
+
+                    <div t-if="state.status === 'running'" class="d-flex align-items-center text-muted">
+                        <i class="fa fa-circle-o-notch fa-spin me-2"/>
+                        <span>Processing in progress, please keep this window open...</span>
+                    </div>
+                    <div t-if="state.status === 'done'" class="alert alert-success d-flex align-items-center mb-0" role="alert">
+                        <i class="fa fa-check-circle me-2"/>
+                        <span>Re-embedding complete. All records are now up to date.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
+
+=== ./static/src/xml/async_field_watcher.xml ===
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="law_case_review.AsyncFieldWatcher">
+        <span/>
+    </t>
+</templates>
+
