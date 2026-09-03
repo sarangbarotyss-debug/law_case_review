@@ -45,4 +45,3 @@ def chunk_and_embed_document(env, document):
             'embedding_model': active_model,
         })
         EmbeddingService.sync_embedding_vector(env, 'law_case_document_chunk', new_chunk.id, embedding_vector, model_option.dimension)
-    env.cr.commit()
