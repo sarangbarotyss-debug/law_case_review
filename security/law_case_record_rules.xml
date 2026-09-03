@@ -127,5 +127,20 @@
             <field name="groups" eval="[(4, ref('group_law_case_manager'))]"/>
         </record>
 
+
+        <record id="rule_client_request_approve_wizard_lawyer" model="ir.rule">
+            <field name="name">Client Request Approve Wizard: lawyer sees own requests</field>
+            <field name="model_id" ref="model_client_request_approve_wizard"/>
+            <field name="domain_force">[('client_request_ids.lawyer_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('law_case_review.group_law_case_lawyer'))]"/>
+        </record>
+
+        <record id="rule_client_request_approve_wizard_manager" model="ir.rule">
+            <field name="name">Client Request Approve Wizard: manager sees all</field>
+            <field name="model_id" ref="model_client_request_approve_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('law_case_review.group_law_case_manager'))]"/>
+        </record>
+
     </data>
 </odoo>

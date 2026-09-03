@@ -7,10 +7,13 @@ from ..services.embedding_service import EmbeddingService
 import re
 
 
-def run_ocr(file_data, file_name):
+def run_ocr(env, file_data, file_name):
+    docling_url = env['ir.config_parameter'].sudo().get_param(
+        'law_case_review.docling_service_url', default='http://localhost:8500'
+    )
     file_content = base64.b64decode(file_data)
     response = requests.post(
-        'http://localhost:8500/extract-text',
+        f'{docling_url}/extract-text',
         files={'file': (file_name, file_content)},
         timeout=1800
     )
@@ -59,7 +62,7 @@ def split_and_dispatch_chunks(env, source):
     env.cr.commit()
 
     try:
-        text = run_ocr(source.file, source.file_name)
+        text = run_ocr(env, source.file, source.file_name)
         source.write({'ocr_text': text})
         env.cr.commit()
     except Exception as e:
@@ -148,103 +151,3 @@ def extract_clauses_from_chunk(env, chunk_text):
     )
     answer = ai_provider_service.call_llm(env, prompt)
     return json.loads(answer)
-
-
-def process_playbook_source(env, source):
-    source.write({'state': 'processing'})
-    env.cr.commit()
-
-    try:
-        text = run_ocr(source.file, source.file_name)
-        source.write({'ocr_text': text})
-        env.cr.commit()
-    except Exception as e:
-        source.write({'state': 'error'})
-        env.cr.commit()
-        raise Exception('OCR step failed: %s' % str(e))
-
-    chunks = split_into_chunks(text)
-
-    existing_clauses = env['law.playbook.clause'].search([('source_id', '=', source.id)])
-    seen_numbers = set(existing_clauses.mapped('clause_number'))
-
-    for i, chunk in enumerate(chunks):
-        try:
-            clauses = extract_clauses_from_chunk(env, chunk)
-        except Exception as e:
-            env['ir.logging'].sudo().create({
-                'name': 'law_case_review',
-                'type': 'server',
-                'level': 'ERROR',
-                'message': 'Chunk %d extraction failed for source %d: %s' % (i, source.id, str(e)),
-                'path': 'law_case_review.playbook_ingestion',
-                'func': 'process_playbook_source',
-                'line': '0',
-            })
-            continue
-
-        for clause in clauses:
-            number = clause.get('clause_number')
-            if not number or number in seen_numbers:
-                continue
-            seen_numbers.add(number)
-
-            clause_text = clause.get('text') or ''
-            title = clause.get('title') or ''
-
-            try:
-                embedding_input = f"Article {number}: {title}. {title}. {clause_text[:200]}"
-                embedding_vector = EmbeddingService.embed(env, embedding_input)
-                model_option = EmbeddingService.get_active_model(env)
-                embedding_model = model_option.model_string
-            except Exception as e:
-                env['law.playbook.clause'].create({
-                    'source_id': source.id,
-                    'clause_number': number,
-                    'title': title,
-                    'text': clause_text,
-                })
-                env.cr.commit()
-                continue
-
-            new_clause = env['law.playbook.clause'].create({
-                'source_id': source.id,
-                'clause_number': number,
-                'title': title,
-                'text': clause_text,
-                'embedding_model': embedding_model,
-            })
-            EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', new_clause.id, embedding_vector, model_option.dimension)
-
-        env.cr.commit()
-
-    source.write({'state': 'done'})
-    env.cr.commit()
-
-
-def reembed_missing_clauses(env, source):
-    from odoo.addons.law_case_review.services.embedding_service import EmbeddingService
-
-    env.cr.execute("""
-        SELECT id FROM law_playbook_clause
-        WHERE source_id = %s
-        AND embedding_vector_768 IS NULL
-        AND embedding_vector_1024 IS NULL
-        AND embedding_vector_1536 IS NULL
-        AND embedding_vector_3072 IS NULL
-    """, [source.id])
-    missing_ids = [row[0] for row in env.cr.fetchall()]
-    missing = env['law.playbook.clause'].browse(missing_ids)
-
-    print("Found %d clause(s) missing embeddings." % len(missing))
-    for clause in missing:
-        try:
-            embedding_input = f"Article {clause.clause_number}: {clause.title or ''}. {clause.title or ''}. {(clause.text or '')[:200]}"
-            embedding_vector = EmbeddingService.embed(env, embedding_input)
-            model_option = EmbeddingService.get_active_model(env)
-            clause.write({'embedding_model': model_option.model_string})
-            EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', clause.id, embedding_vector, model_option.dimension)
-            env.cr.commit()
-            print("Re-embedded:", clause.clause_number)
-        except Exception as e:
-            print("Still failed:", clause.clause_number, "-", str(e))

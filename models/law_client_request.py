@@ -38,6 +38,7 @@ class LawClientRequest(models.Model):
     processing_state = fields.Selection([
         ('pending', 'Processing'),
         ('done', 'Done'),
+        ('error', 'Error'),
     ], default='pending', readonly=True)
     is_case_manager = fields.Boolean(compute='_compute_is_case_manager')
 
@@ -47,30 +48,13 @@ class LawClientRequest(models.Model):
             rec.is_case_manager = is_manager
 
     def action_approve(self):
-        for rec in self:
-            partner = False
-            if rec.email:
-                partner = self.env['res.partner'].search([('email', '=', rec.email)], limit=1)
-            if not partner:
-                partner = self.env['res.partner'].create({
-                    'name': rec.name,
-                    'email': rec.email,
-                    'phone': rec.phone or rec.mobile,
-                    'street': rec.street,
-                    'street2': rec.street2,
-                    'city': rec.city,
-                    'state_id': rec.state_id.id,
-                    'zip': rec.zip,
-                    'country_id': rec.country_id.id,
-                })
-            rec.partner_id = partner
-            case = self.env['law.case'].create({
-                'client_id': partner.id,
-                'description': rec.description,
-                'matter_type': rec.matter_type,
-            })
-            rec.case_id = case
-            rec.state = "approved"
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'client.request.approve.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_client_request_ids': self.ids},
+        }
 
     def action_reject(self):
         self.state = "rejected"
@@ -79,8 +63,11 @@ class LawClientRequest(models.Model):
         self.ensure_one()
         try:
             file_bytes = base64.b64decode(self.file)
+            docling_url = self.env['ir.config_parameter'].sudo().get_param(
+                'law_case_review.docling_service_url', default='http://localhost:8500'
+            )
             response = requests.post(
-                "http://localhost:8500/extract-text",
+                f"{docling_url}/extract-text",
                 files={'file': (self.file_name, file_bytes)},
                 timeout=300,
             )
@@ -132,4 +119,4 @@ class LawClientRequest(models.Model):
                 'func': 'button_process_extraction_job',
                 'line': '0',
             })
-            self.unlink()
+            self.processing_state = 'error'

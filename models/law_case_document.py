@@ -79,8 +79,11 @@ class LawCaseDocument(models.Model):
 
         try:
             file_content = base64.b64decode(self.file)
+            docling_url = self.env['ir.config_parameter'].sudo().get_param(
+                'law_case_review.docling_service_url', default='http://localhost:8500'
+            )
             response = requests.post(
-                'http://localhost:8500/extract-text',
+                f'{docling_url}/extract-text',
                 files={'file': (self.file_name, file_content)},
                 timeout=60,
             )

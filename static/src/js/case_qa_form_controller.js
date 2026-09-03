@@ -17,7 +17,7 @@ patch(FormController.prototype, {
                 x: 0,
                 y: 0,
             });
-            useSubEnv({ caseQAState: this.caseQAState });
+            useSubEnv({ caseQAState: this.caseQAState, caseFormModel: this.model });
             useEffect(
                 (open) => {
                     document.body.classList.toggle("o_case_qa_open", !!open);

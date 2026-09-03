@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="param_docling_service_url" model="ir.config_parameter">
+        <field name="key">law_case_review.docling_service_url</field>
+        <field name="value">http://localhost:8500</field>
+    </record>
+</odoo>

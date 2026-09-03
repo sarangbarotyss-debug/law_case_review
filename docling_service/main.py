@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from docling.document_converter import DocumentConverter
 import shutil
 import tempfile
+import os
 
 app = FastAPI()
 converter = DocumentConverter()
@@ -13,7 +14,9 @@ async def extract_text(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, tmp)
         tmp_path = tmp.name
 
-    result = converter.convert(tmp_path)
-    extracted_text = result.document.export_to_markdown()
-
-    return {"text": extracted_text}
+    try:
+        result = converter.convert(tmp_path)
+        extracted_text = result.document.export_to_markdown()
+        return {"text": extracted_text}
+    finally:
+        os.unlink(tmp_path)

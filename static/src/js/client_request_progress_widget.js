@@ -52,8 +52,8 @@ export class ClientRequestProgress extends Component {
                 records = [];
             }
 
-            if (records.length === 0) {
-                // Record was deleted - extraction failed
+            if (records.length === 0 || records[0].processing_state === "error") {
+                // Extraction failed (record kept for investigation; state marked 'error')
                 await this.orm.call(
                     "client.request.upload.wizard",
                     "action_handle_failure",

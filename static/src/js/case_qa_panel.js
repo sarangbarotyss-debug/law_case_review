@@ -49,6 +49,9 @@ export class CaseQAPanel extends Component {
             } else {
                 await this.loadHistory();
             }
+            if (this.env.caseFormModel) {
+                await this.env.caseFormModel.root.load();
+            }
         } finally {
             this.state.asking = false;
         }
