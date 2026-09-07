@@ -132,10 +132,13 @@ def process_single_chunk(env, source, chunk_index, chunk_text):
         })
         EmbeddingService.sync_embedding_vector(env, 'law_playbook_clause', new_clause.id, embedding_vector, model_option.dimension)
 
-    source.write({'chunk_done_count': source.chunk_done_count + 1 })
-    env.cr.commit()
-
-    if source.chunk_done_count >= source.chunk_count:
+    env.cr.execute(
+        "UPDATE law_playbook_source SET chunk_done_count = chunk_done_count + 1 WHERE id = %s RETURNING chunk_done_count",
+        (source.id,)
+    )
+    new_count = env.cr.fetchone()[0]
+    source.invalidate_recordset(['chunk_done_count'])
+    if new_count >= source.chunk_count:
         source.write({'state': 'done'})
         env.cr.commit()
 

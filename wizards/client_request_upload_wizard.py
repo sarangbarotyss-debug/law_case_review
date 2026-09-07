@@ -46,6 +46,8 @@ class ClientRequestUploadWizard(models.TransientModel):
 
     def action_handle_failure(self):
         self.ensure_one()
+        if self.client_request_id:
+            self.client_request_id.unlink()
         self.write({
             'stage': 'upload',
             'error_message': "Extraction failed, please try again.",

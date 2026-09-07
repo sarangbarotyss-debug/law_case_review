@@ -69,8 +69,10 @@ class LawClientRequest(models.Model):
             response = requests.post(
                 f"{docling_url}/extract-text",
                 files={'file': (self.file_name, file_bytes)},
-                timeout=300,
+                timeout=1800,
             )
+            if response.status_code != 200:
+                raise Exception('OCR Extraction Failed')
             ocr_text = response.json().get('text', '')
 
             prompt = f"""
@@ -110,13 +112,14 @@ class LawClientRequest(models.Model):
                 'processing_state': 'done',
             })
         except Exception as e:
+            file_name = self.file_name
             self.env['ir.logging'].sudo().create({
                 'name': 'law_case_review',
                 'type': 'server',
                 'level': 'ERROR',
-                'message': 'Client request extraction failed for file %s: %s' % (self.file_name, str(e)),
+                'message': 'Client request extraction failed for file %s: %s' % (file_name, str(e)),
                 'path': 'law_case_review.law_client_request',
                 'func': 'button_process_extraction_job',
                 'line': '0',
             })
-            self.processing_state = 'error'
+            self.unlink()

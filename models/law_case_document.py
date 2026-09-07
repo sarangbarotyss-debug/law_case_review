@@ -46,6 +46,12 @@ class LawCaseDocument(models.Model):
                 doc.case_id._touch_qa_content_version()
         return result
 
+    def unlink(self):
+        cases = self.filtered(lambda d: d.state == 'confirmed').mapped('case_id')
+        result = super().unlink()
+        cases._touch_qa_content_version()
+        return result
+
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
@@ -85,13 +91,13 @@ class LawCaseDocument(models.Model):
             response = requests.post(
                 f'{docling_url}/extract-text',
                 files={'file': (self.file_name, file_content)},
-                timeout=60,
+                timeout=1800,
             )
             if response.status_code != 200:
                 self.state = 'error'
                 raise UserError('OCR extraction failed.')
 
-            ocr_text = response.json().get('text')
+            ocr_text = response.json().get('text') or ''
             prompt = (
                 "Read this document text and extract the following fields as JSON only, "
                 "with no extra explanation, no markdown, just raw JSON:\n"
@@ -109,7 +115,16 @@ class LawCaseDocument(models.Model):
             })
         except UserError:
             raise
-        except Exception:
+        except Exception as e:
+            self.env['ir.logging'].sudo().create({
+                'name': 'law_case_review',
+                'type': 'server',
+                'level': 'ERROR',
+                'message': 'Text extraction failed for document %s: %s' % (self.id, str(e)),
+                'path': 'law_case_review.law_case_document',
+                'func': 'action_extract_text',
+                'line': '0',
+            })
             self.state = 'error'
             raise UserError('Extraction failed unexpectedly.')
 
