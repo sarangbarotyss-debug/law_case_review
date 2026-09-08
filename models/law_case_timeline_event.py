@@ -9,7 +9,7 @@ class LawCaseTimelineEvent(models.Model):
     _order = 'event_date asc, id asc'
 
     case_id = fields.Many2one('law.case', string='Case', required=True, ondelete='cascade', index=True)
-    document_id = fields.Many2one('law.case.document', string='Source Document', ondelete='set null')
+    document_id = fields.Many2one('law.case.document', string='Source Document', ondelete='set null', index=True)
 
     event_date = fields.Date(string='Event Date')
     event_date_text = fields.Char(string='Date (as in document)')

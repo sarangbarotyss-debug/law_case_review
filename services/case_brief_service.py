@@ -7,7 +7,7 @@ def generate_case_brief(env, case):
     documents_text = ""
     for doc in case.document_ids:
         if doc.ocr_text:
-            documents_text += f"\n\n--- Document: {doc.name} ({doc.document_type}) ---\n{doc.ocr_text}"
+            documents_text += f"\n\n--- Document: {doc.name} ({doc.document_type}) ---\n{ai_provider_service.wrap_untrusted_text(doc.ocr_text)}"
 
     if not documents_text:
         return "<p><em>No extracted document text available yet. Run Extract Text on the case documents first.</em></p>"

@@ -92,7 +92,7 @@ class LawClientRequest(models.Model):
             }}
             If a field is not found in the text, leave it as an empty string.
             Document text:
-            {ocr_text}
+            {ai_provider_service.wrap_untrusted_text(ocr_text)}
             """
             ai_response = ai_provider_service.call_llm(self.env, prompt)
             data = json.loads(ai_response)
@@ -122,4 +122,5 @@ class LawClientRequest(models.Model):
                 'func': 'button_process_extraction_job',
                 'line': '0',
             })
+            self.env.cr.commit()
             self.unlink()

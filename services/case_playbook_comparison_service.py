@@ -11,7 +11,7 @@ def _build_case_text(case):
         parts.append(case.description)
     for doc in case.document_ids:
         if doc.state == 'confirmed' and doc.ocr_text:
-            parts.append(doc.ocr_text)
+            parts.append(ai_provider_service.wrap_untrusted_text(doc.ocr_text))
     return "\n\n".join(parts)
 
 def _classify_match(env, case_text, clause):

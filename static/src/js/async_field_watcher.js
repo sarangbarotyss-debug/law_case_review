@@ -51,7 +51,7 @@ export class AsyncFieldWatcher extends Component {
                     return;
                 }
                 if (result.length === 0 || !result[0][fieldName]) {
-                    await this.props.record.model.load();
+                    await this.props.record.load();
                     return;
                 }
             }

@@ -7,6 +7,7 @@ from ..services import ai_provider_service
 from odoo import models, fields, api, _
 
 
+
 class LawCaseDocument(models.Model):
     _name = 'law.case.document'
     _description = 'Law Case Document'
@@ -102,7 +103,7 @@ class LawCaseDocument(models.Model):
                 "Read this document text and extract the following fields as JSON only, "
                 "with no extra explanation, no markdown, just raw JSON:\n"
                 "{\"case_number\": \"\", \"client_name\": \"\", \"filing_date\": \"\"}\n\n"
-                "Document text:\n" + ocr_text
+                "Document text:\n" + ai_provider_service.wrap_untrusted_text(ocr_text)
             )
             answer = ai_provider_service.call_llm(self.env, prompt)
             extracted_data = json.loads(answer)
@@ -126,6 +127,7 @@ class LawCaseDocument(models.Model):
                 'line': '0',
             })
             self.state = 'error'
+            self.env.cr.commit()
             raise UserError('Extraction failed unexpectedly.')
 
     def action_save_new(self):

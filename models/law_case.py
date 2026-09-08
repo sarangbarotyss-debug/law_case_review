@@ -40,7 +40,6 @@ class LawCase(models.Model):
         'law.case.timeline.event', 'case_id', string='Timeline Events',
         domain=[('state', '!=', 'rejected')]
     )
-    draft_timeline_event_count = fields.Integer(compute='_compute_draft_timeline_event_count')
     draft_timeline_event_label = fields.Char(compute='_compute_draft_timeline_event_count')
     case_brief_html = fields.Html(string='Case Brief', copy=False)
     case_brief_generated_at = fields.Datetime(string='Brief Generated On', readonly=True, copy=False)

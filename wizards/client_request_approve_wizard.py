@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+from ..models.case_document_ingestion_service import chunk_and_embed_document
 
 
 class ClientRequestApproveWizard(models.TransientModel):
@@ -45,5 +46,17 @@ class ClientRequestApproveWizard(models.TransientModel):
                 'playbook_source_ids': [(6, 0, self.playbook_source_ids.ids)],
                 'lawyer_id': rec.lawyer_id.id,
             })
+
+            if rec.file:
+                new_document = self.env['law.case.document'].create({
+                    'name':rec.file_name or rec.name,
+                    'case_id':case.id,
+                    'file':rec.file,
+                    'file_name':rec.file_name,
+                    'ocr_text':rec.ocr_text,
+                    'state':'confirmed',
+                })
+
+            chunk_and_embed_document(self.env, new_document)
             rec.case_id = case
             rec.state = "approved"

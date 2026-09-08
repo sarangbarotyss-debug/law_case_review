@@ -32,7 +32,7 @@ If the document contains no dated events, return an empty array: []
 Do not invent dates or events that are not explicitly present in the text.
 
 Document text:
-""" + document.ocr_text
+""" + ai_provider_service.wrap_untrusted_text(document.ocr_text)
 
     try:
         ai_response = ai_provider_service.call_llm(env, prompt)

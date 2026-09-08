@@ -23,6 +23,7 @@
         <field name="model_id" ref="model_law_client_request"/>
         <field name="method">button_process_extraction_job</field>
         <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="allow_commit" eval="True"/>
     </record>
 
     <record id="job_function_law_case_playbook_comparison" model="queue.job.function">
@@ -30,5 +31,11 @@
         <field name="method">action_process_playbook_comparison</field>
         <field name="channel_id" ref="queue_job.channel_root"/>
         <field name="allow_commit">True</field>
+    </record>
+    <record id="job_function_law_case_document_extraction" model="queue.job.function">
+        <field name="model_id" ref="model_law_case_document"/>
+        <field name="method">action_extract_text_job</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="allow_commit" eval="True"/>
     </record>
 </odoo>

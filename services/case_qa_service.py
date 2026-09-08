@@ -34,7 +34,7 @@ class CaseQAService:
                 chunk = r['chunk']
                 label = f"{chunk.document_id.name} :: chunk {chunk.chunk_index}"
                 parts.append(f"--- {label} ---")
-                parts.append(chunk.chunk_text)
+                parts.append(ai_provider_service.wrap_untrusted_text(chunk.chunk_text))
                 parts.append("")
         else:
             parts.append("(none found)")
