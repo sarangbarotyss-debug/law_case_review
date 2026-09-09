@@ -38,4 +38,10 @@
         <field name="channel_id" ref="queue_job.channel_root"/>
         <field name="allow_commit" eval="True"/>
     </record>
+    <record id="job_function_law_case_draft_generation" model="queue.job.function">
+        <field name="model_id" ref="model_law_case_draft"/>
+        <field name="method">action_generate_content_job</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="allow_commit" eval="True"/>
+    </record>
 </odoo>

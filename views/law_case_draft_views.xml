@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_case_draft_form" model="ir.ui.view">
+        <field name="name">law.case.draft.form</field>
+        <field name="model">law.case.draft</field>
+        <field name="arch" type="xml">
+            <form string="Case Draft">
+                <header>
+                    <button name="action_mark_reviewed" string="Mark as Reviewed" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_mark_finalized" string="Mark as Finalized" type="object"
+                            class="btn-primary" invisible="state != 'reviewed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,reviewed,finalized"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <strong>AI-generated — requires lawyer review.</strong>
+                        This draft was written by AI based on the case's documents. Review and edit before treating it as final.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="not is_stale">
+                        <field name="new_document_count" nolabel="1"/> new document(s) added to this case since this draft was generated — consider regenerating.
+                    </div>
+                    <group>
+                        <field name="case_id" readonly="1"/>
+                        <field name="draft_type" readonly="1"/>
+                        <field name="instructions" readonly="1"/>
+                    </group>
+                    <field name="content" readonly="state == 'finalized'"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_law_case_draft_list" model="ir.ui.view">
+        <field name="name">law.case.draft.list</field>
+        <field name="model">law.case.draft</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="create_date" string="Generated On"/>
+                <field name="draft_type"/>
+                <field name="state" widget="badge" decoration-warning="state == 'draft'" decoration-info="state == 'reviewed'" decoration-success="state == 'finalized'"/>
+                <field name="is_stale" widget="boolean_toggle" readonly="1"/>
+            </list>
+        </field>
+    </record>
+</odoo>

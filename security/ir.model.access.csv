@@ -27,3 +27,6 @@ access_law_ai_cache_manager,law.ai.cache,law_case_review.model_law_ai_cache,grou
 access_law_case_timeline_event_lawyer,law.case.timeline.event.access.lawyer,model_law_case_timeline_event,group_law_case_lawyer,1,1,1,0
 access_law_case_timeline_event_manager,law.case.timeline.event.access.manager,model_law_case_timeline_event,group_law_case_manager,1,1,1,1
 law_case_review.access_client_request_approve_wizard,access_client_request_approve_wizard,law_case_review.model_client_request_approve_wizard,group_law_case_lawyer,1,1,1,1
+access_law_case_draft,law.case.draft,law_case_review.model_law_case_draft,group_law_case_lawyer,1,1,1,0
+access_law_case_draft_manager,law.case.draft,law_case_review.model_law_case_draft,group_law_case_manager,1,1,1,1
+law_case_review.access_law_case_draft_wizard,access_law_case_draft_wizard,law_case_review.model_law_case_draft_wizard,base.group_user,1,1,1,1

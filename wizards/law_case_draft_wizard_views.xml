@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_law_case_draft_wizard_form" model="ir.ui.view">
+        <field name="name">law.case.draft.wizard.form</field>
+        <field name="model">law.case.draft.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate AI Draft">
+                <group>
+                    <field name="case_id" invisible="1"/>
+                    <field name="draft_type" required="1"/>
+                    <field name="instructions" placeholder="Optional — e.g. 'focus on the breach of contract, keep it under 2 pages'"/>
+                </group>
+                <footer>
+                    <button name="action_generate_draft" type="object" string="Generate Draft" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_law_case_draft_wizard" model="ir.actions.act_window">
+        <field name="name">Generate AI Draft</field>
+        <field name="res_model">law.case.draft.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

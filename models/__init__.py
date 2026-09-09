@@ -19,3 +19,4 @@ from . import case_hearing
 from . import practice_area
 from . import reembed_service
 from . import law_case_timeline_event
+from . import law_case_draft

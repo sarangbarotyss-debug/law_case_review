@@ -50,6 +50,7 @@ class LawCase(models.Model):
         compute='_compute_timeline_extraction_running',
     )
     qa_last_content_update = fields.Datetime(string='Last Content Update for Q&A', copy=False)
+    draft_ids = fields.One2many('law.case.draft', 'case_id', string='Drafts')
 
     def _touch_qa_content_version(self):
         self.write({'qa_last_content_update': fields.Datetime.now()})

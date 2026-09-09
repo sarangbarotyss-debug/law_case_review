@@ -125,6 +125,23 @@
                                 </div>
                                 <field name="case_brief_html" nolabel="1" readonly="1"/>
                             </page>
+                            <page string="Drafts" name="drafts">
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <button name="%(action_law_case_draft_wizard)d"
+                                            type="action"
+                                            string="Generate Draft"
+                                            class="btn-secondary"
+                                            context="{'default_case_id': id}"/>
+                                </div>
+                                <field name="draft_ids">
+                                    <list decoration-info="state == 'draft'" decoration-success="state == 'finalized'">
+                                        <field name="create_date" string="Generated On"/>
+                                        <field name="draft_type"/>
+                                        <field name="state" widget="badge" decoration-warning="state == 'draft'" decoration-info="state == 'reviewed'" decoration-success="state == 'finalized'"/>
+                                        <field name="is_stale" widget="boolean_toggle" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>

@@ -6,3 +6,4 @@ from . import case_playbook_comparison_service
 from . import case_qa_service
 from . import timeline_extraction_service
 from . import case_brief_service
+from . import case_draft_service
